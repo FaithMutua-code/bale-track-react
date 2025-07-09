@@ -1,7 +1,7 @@
 import { useEffect, useRef} from 'react'
 import StatCard from './StatCard'
 import SavingsGoal from './SavingsGoal'
-
+import TransactionTable from './TransactionTable'
 import Chart from 'chart.js/auto'
 
 const Dashboard = () => {
@@ -162,7 +162,7 @@ const Dashboard = () => {
           </div>
            <div className="h-48 md:h-64">
            <canvas ref={balesChartRef} style={{ width: '400px', height: '300px' }} />
-<canvas ref={expensesChartRef} style={{ width: '400px', height: '300px' }} />
+
 
 
 
@@ -194,6 +194,27 @@ const Dashboard = () => {
   </div>
 </div>
       </div>
+           {/* Bottom Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        {/* Recent Transactions */}
+        <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 lg:col-span-2">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-bold text-sm md:text-base">Recent Transactions</h2>
+          </div>
+          
+          <TransactionTable />
+        </div>
+        
+        {/* Expenses Chart */}
+        <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-bold text-sm md:text-base">Expense Breakdown</h2>
+          </div>
+          <div className="h-48 md:h-64">
+          <canvas ref={expensesChartRef} style={{ width: '400px', height: '300px' }} />
+          </div>
+        </div>
+      </div> 
     </>
   )
 }
