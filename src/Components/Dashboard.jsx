@@ -1,5 +1,7 @@
 import { useEffect, useRef} from 'react'
 import StatCard from './StatCard'
+import SavingsGoal from './SavingsGoal'
+
 import Chart from 'chart.js/auto'
 
 const Dashboard = () => {
@@ -162,8 +164,35 @@ const Dashboard = () => {
            <canvas ref={balesChartRef} style={{ width: '400px', height: '300px' }} />
 <canvas ref={expensesChartRef} style={{ width: '400px', height: '300px' }} />
 
+
+
           </div>
         </div>
+{/*saving goals*/}
+<div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+  <div className="flex justify-between items-center mb-4">
+    <h2 className="font-bold text-sm md:text-base">Saving Goals</h2>
+  </div>
+  <div className="space-y-4">
+           <SavingsGoal 
+              title="New Delivery Truck"
+              current={650000}
+              target={1000000}
+            />
+            
+            <SavingsGoal 
+              title="Business Expansion"
+              current={420000}
+              target={1000000}
+            />
+            
+            <SavingsGoal 
+              title="Emergency Fund"
+              current={390000}
+              target={500000}
+            />
+  </div>
+</div>
       </div>
     </>
   )
