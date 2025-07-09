@@ -8,6 +8,19 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.tab-btn {
+  @apply px-4 py-3 font-medium text-gray-500 border-b-2 border-transparent transition-all duration-200 flex items-center whitespace-nowrap;
+}
+
+.tab-btn:hover {
+  @apply text-gray-600;
+}
+
+.tab-btn.active {
+  @apply text-primary border-primary;
+}
+
 .font-inter {
   font-family: 'Inter', sans-serif;
 }
