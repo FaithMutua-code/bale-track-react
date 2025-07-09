@@ -1,7 +1,100 @@
-import React from 'react'
+import { useEffect, useRef} from 'react'
 import StatCard from './StatCard'
+import Chart from 'chart.js/auto'
 
 const Dashboard = () => {
+  // Declare refs here
+  const balesChartRef = useRef(null)
+  const expensesChartRef = useRef(null)
+
+  useEffect(() => {
+    const balesCanvas = balesChartRef.current
+    const expensesCanvas = expensesChartRef.current
+
+    if (balesCanvas && expensesCanvas) {
+      const balesCtx = balesCanvas.getContext('2d')
+      const expensesCtx = expensesCanvas.getContext('2d')
+
+      if (balesCanvas.chart) balesCanvas.chart.destroy()
+      if (expensesCanvas.chart) expensesCanvas.chart.destroy()
+
+      balesCanvas.chart = new Chart(balesCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [
+            {
+              label: 'Bales Bought',
+              data: [45, 32, 28, 51, 42, 19, 35],
+              backgroundColor: '#5D5FEF',
+              borderColor: '#5D5FEF',
+              borderWidth: 1,
+            },
+            {
+              label: 'Bales Sold',
+              data: [38, 29, 25, 47, 39, 15, 30],
+              backgroundColor: '#4FD1C5',
+              borderColor: '#4FD1C5',
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                display: true,
+                drawBorder: false,
+              },
+            },
+            x: {
+              grid: {
+                display: false,
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+          },
+        },
+      })
+
+      expensesCanvas.chart = new Chart(expensesCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Transport', 'Utilities', 'Salaries', 'Other'],
+          datasets: [
+            {
+              data: [25, 20, 30, 25],
+              backgroundColor: ['#5D5FEF', '#4FD1C5', '#ED8936', '#A0AEC0'],
+              borderWidth: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+            },
+          },
+          cutout: '70%',
+        },
+      })
+    }
+
+    return () => {
+      if (balesCanvas?.chart) balesCanvas.chart.destroy()
+      if (expensesCanvas?.chart) expensesCanvas.chart.destroy()
+    }
+  }, [])
+
   return (
     <>
     <header className="flex items-center justify-between mb-6 md:mb-8">
@@ -59,6 +152,18 @@ const Dashboard = () => {
           iconBg="red-100"
           iconColor="danger"
         />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
+        <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 lg:col-span-2">
+          <div className="flex justify-between item-center mb-4">
+           <h2 className="font-bold text-sm md:text-base">Bales Bought vs Sold (Last 7 Days)</h2>
+          </div>
+           <div className="h-48 md:h-64">
+           <canvas ref={balesChartRef} style={{ width: '400px', height: '300px' }} />
+<canvas ref={expensesChartRef} style={{ width: '400px', height: '300px' }} />
+
+          </div>
+        </div>
       </div>
     </>
   )
