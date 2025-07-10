@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
-import Sidebar from './components/Sidebar';
-import Dashboard from './components/Dashboard';
+import Sidebar from './Components/Sidebar';
+import Dashboard from './Components/Dashboard';
+import DataEntry from './Components/DataEntry';
+import Savings from './Components/Savings';
+import Reports from './Components/Reports';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -33,18 +36,18 @@ function App() {
       case 'dashboard':
         return <Dashboard />;
       case 'data-entry':
-        return <div>Data Entry Page</div>;
+        return <DataEntry />;  // Now using the actual component
       case 'savings':
-        return <div>Savings Page</div>;
+        return <Savings />;    // Now using the actual component
       case 'reports':
-        return <div>Reports Page</div>;
+        return <Reports />;    // Now using the actual component
       default:
         return <Dashboard />;
     }
   };
 
   return (
-    <div className="bg-gray-50  flex min-h-screen font-inter transition-colors duration-200">
+    <div className="bg-gray-50 flex min-h-screen font-inter transition-colors duration-200">
       {/* Mobile Menu Button */}
       <button 
         className="md:hidden fixed top-4 left-4 z-50 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg"
