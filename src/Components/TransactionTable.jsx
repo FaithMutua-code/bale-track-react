@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const TransactionTable = () => {
   const transactions = [
@@ -37,13 +37,13 @@ const TransactionTable = () => {
       amount: 'Ksh 50,000',
       status: 'Completed'
     }
-  ]
+  ];
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[600px]">
         <thead>
-          <tr className="text-left text-xs text-gray-500 border-b border-gray-100">
+          <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-700">
             <th className="pb-3 font-semibold">Date</th>
             <th className="pb-3 font-semibold">Description</th>
             <th className="pb-3 font-semibold">Type</th>
@@ -51,15 +51,15 @@ const TransactionTable = () => {
             <th className="pb-3 font-semibold">Status</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
+        <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
           {transactions.map((transaction, index) => (
             <tr key={index}>
-              <td className="py-3 text-xs md:text-sm">{transaction.date}</td>
-              <td className="py-3 text-xs md:text-sm">{transaction.description}</td>
-              <td className="py-3 text-xs md:text-sm">{transaction.type}</td>
-              <td className="py-3 text-xs md:text-sm font-bold">{transaction.amount}</td>
+              <td className="py-3 text-xs md:text-sm text-dark dark:text-white">{transaction.date}</td>
+              <td className="py-3 text-xs md:text-sm text-dark dark:text-white">{transaction.description}</td>
+              <td className="py-3 text-xs md:text-sm text-dark dark:text-white">{transaction.type}</td>
+              <td className="py-3 text-xs md:text-sm font-bold text-dark dark:text-white">{transaction.amount}</td>
               <td className="py-3">
-                <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-success">
+                <span className="px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-success dark:text-green-300">
                   {transaction.status}
                 </span>
               </td>
@@ -68,7 +68,7 @@ const TransactionTable = () => {
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default TransactionTable
+export default TransactionTable;

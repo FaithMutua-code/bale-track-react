@@ -1,30 +1,27 @@
-import {useState} from 'react'
-import { ArrowUpIcon, ArrowDownIcon, CurrencyDollarIcon, CubeIcon } from '@heroicons/react/outline'
-
+import { useState } from 'react';
+import { ArrowUpIcon, ArrowDownIcon, CurrencyDollarIcon, CubeIcon } from '@heroicons/react/outline';
 
 const DataEntry = () => {
-  const [activeTab, setActiveTab] = useState('bales')
-  const [savingsType, setSavingsType] = useState('')
+  const [activeTab, setActiveTab] = useState('bales');
+  const [savingsType, setSavingsType] = useState('');
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    alert(`${activeTab} recorded successfully!`)
-    e.target.reset()
+    e.preventDefault();
+    alert(`${activeTab} recorded successfully!`);
+    e.target.reset();
     if (activeTab === 'savings') {
-      setSavingsType('')
+      setSavingsType('');
     }
-  }
+  };
 
   return (
     <div className="container mx-auto px-0 md:px-4 py-4 md:py-8 max-w-4xl">
-      {/* Data Entry Header */}
       <div className="text-center mb-6 md:mb-8">
-        <h1 className="text-xl md:text-3xl font-semibold text-dark mb-2">Daily Data Entry</h1>
-        <p className="text-gray-600 text-sm md:text-base">Record your daily bale transactions, expenses, and savings</p>
+        <h1 className="text-xl md:text-3xl font-semibold text-dark dark:text-white mb-2">Daily Data Entry</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base">Record your daily bale transactions, expenses, and savings</p>
       </div>
 
-      {/* Tabs Navigation */}
-      <div className="flex overflow-x-auto border-b border-gray-200 mb-4 md:mb-6">
+      <div className="flex overflow-x-auto border-b border-gray-200 dark:border-gray-700 mb-4 md:mb-6">
         <button 
           className={`tab-btn whitespace-nowrap ${activeTab === 'bales' ? 'active' : ''}`}
           onClick={() => setActiveTab('bales')}
@@ -48,15 +45,14 @@ const DataEntry = () => {
         </button>
       </div>
 
-      {/* Bales Form */}
       <div id="bales" className={`tab-content ${activeTab === 'bales' ? 'active' : 'hidden'}`}>
         <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             <div>
-              <label htmlFor="bale-type" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Bale Type</label>
+              <label htmlFor="bale-type" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bale Type</label>
               <select 
                 id="bale-type" 
-                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
                 required
               >
                 <option value="">Select type</option>
@@ -66,10 +62,10 @@ const DataEntry = () => {
               </select>
             </div>
             <div>
-              <label htmlFor="transaction-type" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Transaction Type</label>
+              <label htmlFor="transaction-type" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction Type</label>
               <select 
                 id="transaction-type" 
-                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
                 required
               >
                 <option value="">Select type</option>
@@ -81,21 +77,21 @@ const DataEntry = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             <div>
-              <label htmlFor="quantity" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Quantity</label>
+              <label htmlFor="quantity" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quantity</label>
               <input 
                 type="number" 
                 id="quantity" 
-                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
                 placeholder="0" 
                 required
               />
             </div>
             <div>
-              <label htmlFor="price-per-unit" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Price per Unit (Ksh)</label>
+              <label htmlFor="price-per-unit" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price per Unit (Ksh)</label>
               <input 
                 type="number" 
                 id="price-per-unit" 
-                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
                 placeholder="0.00" 
                 required
               />
@@ -103,10 +99,10 @@ const DataEntry = () => {
           </div>
 
           <div>
-            <label htmlFor="bale-notes" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Notes</label>
+            <label htmlFor="bale-notes" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Notes</label>
             <textarea 
               id="bale-notes" 
-              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
               rows="3" 
               placeholder="Additional information"
             ></textarea>
@@ -123,14 +119,13 @@ const DataEntry = () => {
         </form>
       </div>
 
-      {/* Expenses Form */}
       <div id="expenses" className={`tab-content ${activeTab === 'expenses' ? 'active' : 'hidden'}`}>
         <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
           <div>
-            <label htmlFor="expense-category" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Category</label>
+            <label htmlFor="expense-category" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
             <select 
               id="expense-category" 
-              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
               required
             >
               <option value="">Select category</option>
@@ -143,22 +138,22 @@ const DataEntry = () => {
           </div>
 
           <div>
-            <label htmlFor="expense-description" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label htmlFor="expense-description" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
             <input 
               type="text" 
               id="expense-description" 
-              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
               placeholder="What was this expense for?" 
               required
             />
           </div>
 
           <div>
-            <label htmlFor="expense-amount" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Amount (Ksh)</label>
+            <label htmlFor="expense-amount" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount (Ksh)</label>
             <input 
               type="number" 
               id="expense-amount" 
-              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
               placeholder="0.00" 
               required
             />
@@ -175,14 +170,13 @@ const DataEntry = () => {
         </form>
       </div>
 
-      {/* Savings Form */}
       <div id="savings" className={`tab-content ${activeTab === 'savings' ? 'active' : 'hidden'}`}>
         <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
           <div>
-            <label htmlFor="savings-type" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Savings Type</label>
+            <label htmlFor="savings-type" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Savings Type</label>
             <select 
               id="savings-type" 
-              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
               required
               value={savingsType}
               onChange={(e) => setSavingsType(e.target.value)}
@@ -196,11 +190,11 @@ const DataEntry = () => {
 
           {savingsType === 'target' && (
             <div>
-              <label htmlFor="target-name" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Target Name</label>
+              <label htmlFor="target-name" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Name</label>
               <input 
                 type="text" 
                 id="target-name" 
-                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
                 placeholder="e.g. New Truck" 
                 required
               />
@@ -209,22 +203,22 @@ const DataEntry = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             <div>
-              <label htmlFor="savings-amount" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Amount (Ksh)</label>
+              <label htmlFor="savings-amount" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount (Ksh)</label>
               <input 
                 type="number" 
                 id="savings-amount" 
-                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
                 placeholder="0.00" 
                 required
               />
             </div>
             {savingsType === 'target' && (
               <div>
-                <label htmlFor="target-amount" className="block text-xs md:text-sm font-medium text-gray-700 mb-1">Target Amount (Ksh)</label>
+                <label htmlFor="target-amount" className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Amount (Ksh)</label>
                 <input 
                   type="number" 
                   id="target-amount" 
-                  className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" 
+                  className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white" 
                   placeholder="0.00" 
                   required
                 />
@@ -243,7 +237,7 @@ const DataEntry = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DataEntry
+export default DataEntry;

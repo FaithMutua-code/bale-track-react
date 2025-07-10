@@ -5,6 +5,7 @@ import DataEntry from './Components/DataEntry';
 import Savings from './Components/Savings';
 import Reports from './Components/Reports';
 
+
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState('dashboard');
@@ -36,21 +37,21 @@ function App() {
       case 'dashboard':
         return <Dashboard />;
       case 'data-entry':
-        return <DataEntry />;  // Now using the actual component
+        return <DataEntry />;
       case 'savings':
-        return <Savings />;    // Now using the actual component
+        return <Savings />;
       case 'reports':
-        return <Reports />;    // Now using the actual component
+        return <Reports />;
       default:
         return <Dashboard />;
     }
   };
 
   return (
-    <div className="bg-gray-50 flex min-h-screen font-inter transition-colors duration-200">
+    <div className="bg-gray-50 dark:bg-gray-900 flex min-h-screen font-inter transition-colors duration-200">
       {/* Mobile Menu Button */}
       <button 
-        className="md:hidden fixed top-4 left-4 z-50 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg"
+        className="md:hidden fixed top-4 left-4 z-50 w-10 h-10 rounded-full bg-primary dark:bg-primary-light text-white flex items-center justify-center shadow-lg"
         onClick={() => setSidebarOpen(!sidebarOpen)}
         aria-label="Toggle menu"
       >
@@ -72,6 +73,7 @@ function App() {
       />
       
       <main className={`flex-1 transition-all duration-300 ml-0 ${sidebarOpen ? 'md:ml-64 opacity-50 md:opacity-100' : 'md:ml-64 opacity-100'}`}>
+        
         {renderPage()}
       </main>
     </div>

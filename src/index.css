@@ -8,13 +8,22 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --text-color: #2D3748;
+  --grid-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --text-color: #F7FAFC;
+  --grid-color: rgba(255, 255, 255, 0.1);
+}
 
 .tab-btn {
-  @apply px-4 py-3 font-medium text-gray-500 border-b-2 border-transparent transition-all duration-200 flex items-center whitespace-nowrap;
+  @apply px-4 py-3 font-medium text-gray-500 dark:text-gray-400 border-b-2 border-transparent transition-all duration-200 flex items-center whitespace-nowrap;
 }
 
 .tab-btn:hover {
-  @apply text-gray-600;
+  @apply text-gray-600 dark:text-gray-300;
 }
 
 .tab-btn.active {
@@ -23,4 +32,9 @@
 
 .font-inter {
   font-family: 'Inter', sans-serif;
+}
+
+/* Additional dark mode styles */
+.dark .tab-content {
+  color: #F7FAFC;
 }
