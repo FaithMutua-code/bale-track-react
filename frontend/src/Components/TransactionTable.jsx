@@ -51,9 +51,9 @@ const TransactionTable = () => {
             <th className="pb-3 font-semibold">Status</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+        <tbody className="divide-y divide-gray-100 dark:divide-gray-700 ">
           {transactions.map((transaction, index) => (
-            <tr key={index}>
+            <tr key={index} className='mb-8 mt-5'>
               <td className="py-3 text-xs md:text-sm text-dark dark:text-white">{transaction.date}</td>
               <td className="py-3 text-xs md:text-sm text-dark dark:text-white">{transaction.description}</td>
               <td className="py-3 text-xs md:text-sm text-dark dark:text-white">{transaction.type}</td>

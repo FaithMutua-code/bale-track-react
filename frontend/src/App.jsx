@@ -4,11 +4,13 @@ import Dashboard from './Components/Dashboard';
 import DataEntry from './Components/DataEntry';
 import Savings from './Components/Savings';
 import Reports from './Components/Reports';
+import LoginPopUp from './Components/Login';
 
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState('dashboard');
+  const [showLogin, setShowLogin] = useState(false);
 
   // Close sidebar when clicking outside on mobile
   useEffect(() => {
@@ -48,6 +50,9 @@ function App() {
   };
 
   return (
+  <>
+    {showLogin && <LoginPopUp setShowLogin={setShowLogin} />}
+
     <div className="bg-gray-50 dark:bg-gray-900 flex min-h-screen font-inter transition-colors duration-200">
       {/* Mobile Menu Button */}
       <button 
@@ -73,11 +78,12 @@ function App() {
       />
       
       <main className={`flex-1 transition-all duration-300 ml-0 ${sidebarOpen ? 'md:ml-64 opacity-50 md:opacity-100' : 'md:ml-64 opacity-100'}`}>
-        
         {renderPage()}
       </main>
     </div>
-  );
+  </>
+);
+
 }
 
 export default App;

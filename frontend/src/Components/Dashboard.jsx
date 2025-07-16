@@ -1,14 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import StatCard from './StatCard';
 import SavingsGoal from './SavingsGoal';
 import TransactionTable from './TransactionTable';
 import Chart from 'chart.js/auto';
 import { useTheme } from '../context/ThemeProvider';
+import LoginPopUp from './Login';
+import { use } from 'react';
 
 const Dashboard = () => {
   const balesChartRef = useRef(null);
   const expensesChartRef = useRef(null);
   const { theme } = useTheme();
+  const [showLogin, setShowLogin] = useState(false)
 
   useEffect(() => {
     const balesCanvas = balesChartRef.current;
@@ -135,22 +138,41 @@ const Dashboard = () => {
 
   return (
     <>
-      <header className="flex items-center justify-between mb-6 md:mb-8">
+    {showLogin && (
+
+      <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center backdrop-blur-sm">
+        <div className="relative">
+        <button
+           className="absolute top-3 right-6 w-7 h-7 flex items-center justify-center rounded-full bg-white dark:bg-gray-700 text-gray-500 hover:text-red-500 shadow-sm hover:shadow-md transition"
+
+          onClick={() => setShowLogin(false)}
+        >
+        ✕
+        </button>
+        <LoginPopUp setShowLogin={setShowLogin} />
+      </div>
+    </div>
+    )}
+
+
+
+      <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 items-center  mb-6 md:mb-8 mt-8 ml-8 mr-8 ">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-dark dark:text-white">Bale Trading Dashboard</h1>
           <p className="text-gray-500 dark:text-gray-400 text-xs md:text-sm">Track your bale transactions and profitability</p>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center  space-x-4">
           <div className="text-right mr-4 hidden sm:block dark:text-gray-300">Welcome Back</div>
-          <div className="text-gray-500 dark:text-gray-400 text-xs md:text-sm">Bale Trader</div>
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-light dark:bg-gray-700 flex items-center justify-center text-primary dark:text-white font-semibold">
-            BT
-          </div>
+          <div className="text-gray-500  dark:text-gray-400 text-xs md:text-sm">Bale Trader</div>
+          <button
+           className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-light dark:bg-gray-700 flex items-center justify-center text-primary dark:text-white font-semibold hover:ring-2 ring-indigo-400 transition"
+            onClick={() => setShowLogin(true)}
+          >BT</button>
         </div>
-      </header>
+      </header> 
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
+      <div className="grid grid-cols-1 ml-6 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 mr-6">
         <StatCard 
           title="Today's Profit"
           value="Ksh 245,800"
@@ -189,7 +211,7 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 ml-6 mr-6">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 md:p-6 lg:col-span-2">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-bold text-sm md:text-base text-dark dark:text-white">Bales Bought vs Sold (Last 7 Days)</h2>
@@ -223,7 +245,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 ml-6 mr-6">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 md:p-6 lg:col-span-2">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-bold text-sm md:text-base text-dark dark:text-white">Recent Transactions</h2>

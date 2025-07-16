@@ -7,6 +7,7 @@ import {
   SunIcon
 } from '@heroicons/react/outline';
 import { useTheme } from '../context/ThemeProvider';
+import { assets } from '../assets/assets';
 
 const Sidebar = ({ sidebarOpen, activePage, onNavigate }) => {
   const { theme, toggleTheme } = useTheme();
@@ -18,7 +19,7 @@ const Sidebar = ({ sidebarOpen, activePage, onNavigate }) => {
   ];
 
   return (
-    <aside className={`sidebar w-64 bg-white dark:bg-gray-800 shadow-md fixed h-full transition-transform duration-300 ease-in-out ${
+    <aside className={`sidebar w-64  bg-white dark:bg-gray-800 shadow-md fixed h-full transition-transform duration-300 ease-in-out ${
       sidebarOpen ? 'translate-x-0' : '-translate-x-full'
     } md:translate-x-0 z-40`}>
       <div className="p-6 flex justify-between items-center">
@@ -60,17 +61,22 @@ const Sidebar = ({ sidebarOpen, activePage, onNavigate }) => {
       </nav>
 
       {/* Bottom section with user info */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-primary-light dark:bg-gray-700 flex items-center justify-center text-primary dark:text-white font-semibold mr-3">
-            BT
-          </div>
-          <div>
-            <p className="text-sm font-medium text-dark dark:text-white">Bale Trader</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Admin</p>
-          </div>
-        </div>
-      </div>
+     <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 dark:border-gray-700">
+  <div className="flex items-center">
+    <div className="w-10 h-10 rounded-full bg-primary-light dark:bg-gray-700 flex items-center justify-center overflow-hidden mr-3 shadow-sm">
+      <img 
+        src={assets.settings_icon} 
+        alt="Settings Icon"
+        className="w-6 h-6 object-contain dark:invert" 
+      />
+    </div>
+    <div>
+      <p className="text-sm font-medium text-dark dark:text-white">Bale Trader</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400">Settings</p>
+    </div>
+  </div>
+</div>
+
     </aside>
   );
 };
