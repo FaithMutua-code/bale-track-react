@@ -13,6 +13,8 @@ const Dashboard = () => {
   const { theme } = useTheme();
   const [showLogin, setShowLogin] = useState(false)
 
+  const [isLoggedIn , setIsLoggedIn] = useState(false)
+
   useEffect(() => {
     const balesCanvas = balesChartRef.current;
     const expensesCanvas = expensesChartRef.current;
@@ -166,9 +168,24 @@ const Dashboard = () => {
           <div className="text-right mr-4 hidden sm:block dark:text-gray-300">Welcome Back</div>
           <div className="text-gray-500  dark:text-gray-400 text-xs md:text-sm">Bale Trader</div>
           <button
-           className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-light dark:bg-gray-700 flex items-center justify-center text-primary dark:text-white font-semibold hover:ring-2 ring-indigo-400 transition"
-            onClick={() => setShowLogin(true)}
-          >BT</button>
+             className={`rounded-full flex items-center justify-center font-semibold hover:ring-2 ring-indigo-400 transition
+              ${isLoggedIn 
+                  ? "w-8 h-8 md:w-10 md:h-10 text-primary dark:text-white bg-primary-light dark:bg-gray-700" 
+                  : "px-4 h-8 md:px-5 md:h-10 text-sm bg-primary text-white"
+              }`
+              }
+            onClick={() =>{
+              if(!isLoggedIn){
+                setShowLogin(true);
+              }
+              else{
+                console.log("go to Dashboard/Profile")
+              }
+            }}
+          >
+            {isLoggedIn ? "BT" : "Sign In"}
+
+          </button>
         </div>
       </header> 
 
