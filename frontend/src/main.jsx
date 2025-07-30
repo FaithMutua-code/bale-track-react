@@ -3,16 +3,15 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { ThemeProvider } from './context/ThemeProvider';
-import {BrowserRouter} from "react-router-dom"
-import StoreContextProvider from './context/StoreContext';
+import { AuthContextProvider } from './context/AuthContext';
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-  <StoreContextProvider>
     <ThemeProvider>
-      <App />
+      <AuthContextProvider>
+        <App />  {/* Only this should render BaleTrack */}
+      </AuthContextProvider>
     </ThemeProvider>
-  </StoreContextProvider>
   </BrowserRouter>
-  
 );
