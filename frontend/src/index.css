@@ -38,3 +38,16 @@
 .dark .tab-content {
   color: #F7FAFC;
 }
+
+
+/* Add to your CSS */
+.group-hover\:block {
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.group:hover .group-hover\:block {
+  opacity: 1;
+  transform: translateY(0);
+}
