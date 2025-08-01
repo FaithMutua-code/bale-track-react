@@ -41,14 +41,14 @@ const Dashboard = () => {
   ]
 
   return (
-    <div>
+    <div className='h-full'>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-6">
         {stats.map((stat, index) => (
           <StatsCard key={index} {...stat} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5 mb-8">
         <div className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow lg:col-span-2">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
             <h2 className="font-bold text-base dark:text-white">User Activity (Last 7 Days)</h2>
@@ -63,7 +63,7 @@ const Dashboard = () => {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow">
+        <div className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow mb-5">
           <div className="flex justify-between items-center mb-5">
             <h2 className="font-bold text-base dark:text-white">Feedback Distribution</h2>
             <button className="text-xs text-primary-600 dark:text-primary-400 font-medium">View details</button>
@@ -74,7 +74,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5 ">
         <div className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow lg:col-span-2">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
             <h2 className="font-bold text-base dark:text-white">Recent Users</h2>
@@ -83,7 +83,7 @@ const Dashboard = () => {
           <RecentUsersTable />
         </div>
         
-        <div className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow">
+        <div className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow ">
           <div className="flex justify-between items-center mb-5">
             <h2 className="font-bold text-base dark:text-white">User Engagement</h2>
             <button className="text-xs text-primary-600 dark:text-primary-400 font-medium">View details</button>

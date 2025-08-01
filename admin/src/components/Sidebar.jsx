@@ -35,7 +35,7 @@ const Sidebar = ({ isOpen, toggleSidebar, currentPage, setCurrentPage }) => {
       
       <aside 
         className={`fixed lg:relative z-40 w-64 h-full bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out 
-          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}  flex flex-col`}
       >
         <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
           <div className="flex items-center text-primary-600 dark:text-primary-400 font-bold text-xl">
@@ -73,7 +73,7 @@ const Sidebar = ({ isOpen, toggleSidebar, currentPage, setCurrentPage }) => {
           </ul>
         </nav>
         
-        <div className="p-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="p-4 border-t border-gray-100 dark:border-gray-700  ">
           <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-1">
             <button 
               onClick={() => toggleDarkMode(false)}

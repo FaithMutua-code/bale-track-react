@@ -40,7 +40,7 @@ function App() {
 
   return (
     <ThemeProvider>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen h-full">
         <div className="flex flex-col md:flex-row w-full">
           <Sidebar 
             isOpen={sidebarOpen} 
@@ -55,7 +55,7 @@ function App() {
               toggleNotifications={toggleNotifications}
             />
             
-            <main className="p-4 md:p-6 lg:p-8">
+            <main className="p-4 md:p-6 lg:p-8 ">
               {renderPage()}
             </main>
           </div>

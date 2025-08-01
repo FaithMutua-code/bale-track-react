@@ -13,13 +13,13 @@ const Header = ({ toggleSidebar, toggleNotifications }) => {
         >
           <Bars3Icon className="w-5 h-5" />
         </button>
-        <div>
+        <div className='mt-6 ml-5'>
           <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">Admin Dashboard</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm">Overview of system metrics and activities</p>
         </div>
       </div>
       
-      <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
+      <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto mr-6 mt-6">
         <button 
           onClick={toggleNotifications}
           className="relative w-9 h-9 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
