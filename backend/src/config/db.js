@@ -1,38 +1,53 @@
-
-
 import mongoose from "mongoose";
 
-/***
- * Connects to the database using mongoose
- * 
- * Uses the envirionment variable  DATABASE_URL
- * 
+/**
+ * Connects to the MongoDB database using Mongoose
+ * Uses the environment variable DATABASE_URL
+ * @returns {Promise<void>}
  */
-
 export const connectDb = async () => {
-    const mongoUri = process.env.DATABASE_URL
+    const mongoUri = process.env.DATABASE_URL;
 
-
-    if(!mongoUri){
-        console.error("Environment variable for the Db is not defined")
-        process.exit(1)
+    if (!mongoUri) {
+        console.error("DATABASE_URL environment variable is not defined");
+        process.exit(1);
     }
 
+    try {
+        console.log("Establishing connection to the database...");
 
-    try{
-        console.log("Establishing connection to the Db .....")
+        // Remove deprecated options (no longer needed in Mongoose 6+)
+        const conn = await mongoose.connect(mongoUri);
 
+        console.log(`MongoDB connected: ${conn.connection.host}`);
+        console.log(`Database name: ${conn.connection.name}`);
+        
+        // Connection event listeners
+        mongoose.connection.on("connected", () => {
+            console.log("Mongoose connected to DB");
+        });
 
-        const conn = await mongoose.connect(mongoUri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        })
+        mongoose.connection.on("error", (err) => {
+            console.error("Mongoose connection error:", err);
+        });
 
-        console.log(`MongoDb connected:${conn.connection.host}`)
-        console.log(`Database name : ${conn.connection.name}`)
+        mongoose.connection.on("disconnected", () => {
+            console.warn("Mongoose disconnected from DB");
+        });
 
-    }catch(error){
-        console.error("Connection Failed ", error.message)
-        process.exit(1)
+    } catch (error) {
+        console.error("Database connection failed:", error.message);
+        process.exit(1);
     }
-}
+};
+
+// Graceful shutdown handler
+const gracefulShutdown = async () => {
+    await mongoose.connection.close();
+    console.log("Mongoose connection closed through app termination");
+    process.exit(0);
+};
+
+// Handle app termination
+process.on("SIGINT", gracefulShutdown);
+process.on("SIGTERM", gracefulShutdown);

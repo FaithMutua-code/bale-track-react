@@ -3,6 +3,7 @@ import BaleTrack from "./BaleTrack";
 import {createBrowserRouter, Route, Routes} from 'react-router-dom'
 import AuthForm from "./Components/Login";
 import Profile from "./Components/Profile";
+import { ToastContainer, toast } from "react-toastify";
 
 const queryClient = new QueryClient();
 
@@ -12,6 +13,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ToastContainer />
       <Routes>
         <Route path="/login" element={<AuthForm />} />
         <Route path="/profile" element={<Profile />} />

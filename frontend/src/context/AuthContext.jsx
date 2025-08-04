@@ -8,6 +8,8 @@ export const AuthContext = createContext({
   loginFunction: () => {},
   logoutFunction: () => {},
   isLoading: true,
+  refreshToken: async () => {},
+
 });
 
 export const AuthContextProvider = ({ children }) => {
@@ -15,6 +17,10 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+
+
+  
 
   // Initialize auth state from localStorage
   useEffect(() => {

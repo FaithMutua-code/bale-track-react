@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {User} from  './userModel.js'
+import User from "./userModel.js";
 
 
 const baleSchema = new mongoose.Schema({
@@ -25,7 +25,7 @@ const baleSchema = new mongoose.Schema({
     min: [1, 'Quantity must be at least 1'],
   }
   ,
-  price: {
+  pricePerUnit: {
     type: Number,
     required: true,
     min: [0, 'Price must be a positive number'],

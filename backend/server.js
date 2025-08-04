@@ -2,7 +2,8 @@ import express from  'express'
 import cors from 'cors'
 import 'dotenv/config'
 import {connectDb} from './src/config/db.js'
-import  {userRoutes} from './src/routes/userRoutes.js'
+import userRouter from './src/routes/userRoutes.js'
+import baleRouter from './src/routes/baleRoutes.js'
 
 
 //app config
@@ -25,7 +26,8 @@ connectDb()
 
 //api endpoints
 app.use("/uploads", express.static('uploads'))
-userRoutes(app)
+app.use("/api/user", userRouter)
+app.use("/api/bales", baleRouter)
 
 
 
