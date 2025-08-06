@@ -9,20 +9,20 @@ const expenseSchema = new mongoose.Schema({
   expenseType: {
     type: String,
     required: true,
-    enum: ["transport", "utilities", "salaries", "supplies", "other"],
+    enum:  ["transport", "utilities", "salaries", "supplies", "other"],
     required: true,
     lowercase: true,
     trim: true,
   },
 
-  description: {
+  expenseDescription: {
     type: String,
     trim: true,
     maxlength: [500, "Description cannot exceed 500 characters"],
     default: "",
   },
 
-  amount: {
+  expenseAmount: {
     type: Number,
     required: true,
     min: [1, "Quantity must be at least 1"],

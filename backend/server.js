@@ -4,6 +4,7 @@ import 'dotenv/config'
 import {connectDb} from './src/config/db.js'
 import userRouter from './src/routes/userRoutes.js'
 import baleRouter from './src/routes/baleRoutes.js'
+import expenseRouter from './src/routes/expenseRoutes.js'
 
 
 //app config
@@ -28,6 +29,7 @@ connectDb()
 app.use("/uploads", express.static('uploads'))
 app.use("/api/user", userRouter)
 app.use("/api/bales", baleRouter)
+app.use("/api/expense", expenseRouter)
 
 
 

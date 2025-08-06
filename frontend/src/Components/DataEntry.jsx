@@ -379,35 +379,35 @@ const DataEntry = () => {
         <form className="space-y-3 md:space-y-4">
           <div>
             <label
-              htmlFor="expense-category"
+              htmlFor="expenseType"
               className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
             >
               Category
             </label>
             <select
-              id="expense-category"
+              id="expenseType"
               className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
               required
             >
               <option value="">Select category</option>
-              <option value="transport">Transport</option>
-              <option value="utilities">Utilities</option>
-              <option value="salaries">Salaries</option>
-              <option value="supplies">Supplies</option>
-              <option value="other">Other</option>
+              <option value="transport">transport</option>
+              <option value="utilities">utilities</option>
+              <option value="salaries">salaries</option>
+              <option value="supplies">supplies</option>
+              <option value="other">other</option>
             </select>
           </div>
 
           <div>
             <label
-              htmlFor="expense-description"
+              htmlFor="expenseDescription"
               className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
             >
               Description
             </label>
             <input
               type="text"
-              id="expense-description"
+              id="expenseDescription"
               className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
               placeholder="What was this expense for?"
               required
@@ -416,14 +416,14 @@ const DataEntry = () => {
 
           <div>
             <label
-              htmlFor="expense-amount"
+              htmlFor="expenseAmount"
               className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
             >
               Amount (Ksh)
             </label>
             <input
               type="number"
-              id="expense-amount"
+              id="expenseAmount"
               className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
               placeholder="0.00"
               required
