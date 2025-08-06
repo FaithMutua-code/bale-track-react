@@ -1,5 +1,6 @@
-import User from "../models/userModel.js";
+
 import Bale from "../models/baleModel.js";
+import mongoose from "mongoose";
 
 //Helper function for error handling
 const handleError = (res, error, message = "An error occurred") => {
@@ -69,10 +70,10 @@ const getBales = async (req, res) => {
   try {
     const userId = req.user._id;
     console.log("Fetching bales for user:", userId); // Debug log
-    
+
     const bales = await Bale.find({ user: userId });
     console.log("Found bales:", bales); // Debug log
-    
+
     res.status(200).json({
       success: true,
       data: { bales },
@@ -129,47 +130,80 @@ const updateBale = async (req, res) => {
     const { baleType, transactionType, quantity, pricePerUnit, description } =
       req.body;
 
+    console.log("Update req received", { id, userId, body: req.body });
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
+      console.log("Invalid bale Id provided", id);
       return res.status(400).json({
         success: false,
         message: "Invalid bale ID",
       });
     }
 
-    // Validate quantity and price if provided
-    if (quantity && quantity <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Quantity must be positive",
-      });
+    //create update if provided the fields
+    const updateFields = {};
+
+    if (baleType !== undefined) updateFields.baleType = baleType;
+
+    if (transactionType !== undefined) {
+      if (!["purchase", "sale", "transfer"].includes(transactionType)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid transaction type",
+        });
+      }
+
+      updateFields.transactionType = transactionType;
     }
 
-    if (pricePerUnit && pricePerUnit < 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Price cannot be negative",
-      });
+    // Validate quantity and price if provided
+    if (quantity !== undefined) {
+      if (quantity && quantity <= 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Quantity must be positive",
+        });
+      }
+      updateFields.quantity = quantity;
     }
+
+    if (pricePerUnit !== undefined) {
+      if (pricePerUnit < 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Price cannot be negative",
+        });
+      }
+      updateFields.pricePerUnit = pricePerUnit;
+    }
+
+    if (description !== undefined) updateFields.description = description;
+
+    console.log("Updating with fields:", updateFields);
 
     const updatedBale = await Bale.findOneAndUpdate(
       { _id: id, user: userId },
-      {
-        baleType,
-        transactionType,
-        quantity,
-        pricePerUnit,
-        description,
-      },
+      updateFields,
+
       { new: true, runValidators: true }
     );
 
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No valid fields provided for update",
+      });
+    }
+
     if (!updatedBale) {
+      console.log("Bale not found or unauthorized", { id, userId });
       return res.status(404).json({
         success: false,
         message: "Bale not found or you are not authorized to update it",
       });
     }
 
+    console.log("Successfully updated");
     res.status(200).json({
       success: true,
       data: {

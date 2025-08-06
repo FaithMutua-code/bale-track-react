@@ -6,7 +6,7 @@ const baleRouter = express.Router();
 
 baleRouter.post('/', protect,createBaleEntry);
 baleRouter.get('/', protect ,getBales);
-baleRouter.get('/:id', getBaleById);
-baleRouter.patch('/:id', updateBale)
-baleRouter.delete('/:id', deleteBale)
+baleRouter.get('/:id',protect, getBaleById);
+baleRouter.patch('/:id',protect, updateBale)
+baleRouter.delete('/:id', protect,deleteBale)
 export default baleRouter;
