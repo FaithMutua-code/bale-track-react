@@ -8,9 +8,13 @@ import {
 } from '@heroicons/react/outline';
 import { useTheme } from '../context/ThemeProvider';
 import { assets } from '../assets/assets';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+
 
 const Sidebar = ({ sidebarOpen, activePage, onNavigate }) => {
   const { theme, toggleTheme } = useTheme();
+   const { user } = useContext(AuthContext)
   const navItems = [
     { id: 'dashboard', icon: <ChartBarIcon className="h-5 w-5 mr-3" />, label: 'Dashboard' },
     { id: 'data-entry', icon: <DocumentTextIcon className="h-5 w-5 mr-3" />, label: 'Data Entry' },
@@ -65,14 +69,16 @@ const Sidebar = ({ sidebarOpen, activePage, onNavigate }) => {
   <div className="flex items-center">
     <div className="w-10 h-10 rounded-full bg-primary-light dark:bg-gray-700 flex items-center justify-center overflow-hidden mr-3 shadow-sm">
       <img 
-        src={assets.settings_icon} 
-        alt="Settings Icon"
+        src={assets.feedback_icon} 
+        alt="FeedBack Icon"
         className="w-6 h-6 object-contain dark:invert" 
       />
     </div>
     <div>
-      <p className="text-sm font-medium text-dark dark:text-white">Bale Trader</p>
-      <p className="text-xs text-gray-500 dark:text-gray-400">Settings</p>
+      <p className="text-sm font-medium text-dark dark:text-white">
+      {user ? user.name : "Guest"}
+      </p>
+      <p className="text-xs text-gray-500 dark:text-gray-400">FeedBack</p>
     </div>
   </div>
 </div>

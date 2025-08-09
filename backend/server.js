@@ -29,7 +29,7 @@ connectDb()
 app.use("/uploads", express.static('uploads'))
 app.use("/api/user", userRouter)
 app.use("/api/bales", baleRouter)
-app.use("/api/expense", expenseRouter)
+app.use("/api/expenses", expenseRouter)
 
 
 

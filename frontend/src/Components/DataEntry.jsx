@@ -7,31 +7,21 @@ import {
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/outline";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 import { useAuth } from "../context/useAuth";
 import { BaleContext } from "../context/BaleContext";
 import BaleFormDropdown from "./BaleDropDown";
 import { useRef } from "react";
+import ExpenseForm from "./ExpenseForm";
+import Spinner from "./Spinner";
 
 {
   /**update the bale entry to reduce  on submission */
 }
 
-const Spinner = ({ size = "md" }) => {
-  const sizes = {
-    sm: "h-4 w-4",
-    md: "h-8 w-8",
-    lg: "h-12 w-12",
-  };
 
-  return (
-    <div
-      className={`animate-spin rounded-full border-2 border-gray-300 border-t-primary ${sizes[size]}`}
-    />
-  );
-};
 
 const DataEntry = () => {
   const [activeTab, setActiveTab] = useState("bales");
@@ -161,7 +151,7 @@ const DataEntry = () => {
   };
 
   const handleEdit = (bale) => {
-     console.log("Editing bale:", bale); // Check this in console
+     //console.log("Editing bale:", bale); // Check this in console
   // ... rest of the function
     setBaleForm({
       baleType: bale.baleType,
@@ -369,76 +359,20 @@ const DataEntry = () => {
         </div>
       </div>
 
+
+
+
       {/** Expenses Tab */}
       <div
         id="expenses"
         className={`tab-content ${
           activeTab === "expenses" ? "active" : "hidden"
         }`}
+        
+
       >
-        <form className="space-y-3 md:space-y-4">
-          <div>
-            <label
-              htmlFor="expenseType"
-              className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Category
-            </label>
-            <select
-              id="expenseType"
-              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
-              required
-            >
-              <option value="">Select category</option>
-              <option value="transport">transport</option>
-              <option value="utilities">utilities</option>
-              <option value="salaries">salaries</option>
-              <option value="supplies">supplies</option>
-              <option value="other">other</option>
-            </select>
-          </div>
-
-          <div>
-            <label
-              htmlFor="expenseDescription"
-              className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Description
-            </label>
-            <input
-              type="text"
-              id="expenseDescription"
-              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
-              placeholder="What was this expense for?"
-              required
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="expenseAmount"
-              className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Amount (Ksh)
-            </label>
-            <input
-              type="number"
-              id="expenseAmount"
-              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
-              placeholder="0.00"
-              required
-            />
-          </div>
-
-          <div className="pt-1 md:pt-2">
-            <button
-              type="submit"
-              className="w-full px-4 py-2 md:px-6 md:py-2 bg-primary text-white text-xs md:text-sm font-medium rounded-lg hover:bg-opacity-90 transition duration-200"
-            >
-              Record Expense
-            </button>
-          </div>
-        </form>
+        <ExpenseForm />
+        
       </div>
 
       {/** Savings Tab */}
