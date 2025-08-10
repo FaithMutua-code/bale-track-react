@@ -1,9 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import BaleTrack from "./BaleTrack";
-import {createBrowserRouter, Route, Routes} from 'react-router-dom'
-import AuthForm from "./Components/Login";
-import Profile from "./Components/Profile";
-import { ToastContainer, toast } from "react-toastify";
+import { Route, Routes} from 'react-router-dom'
+import { ToastContainer} from "react-toastify";
+import FeedbackForm from "./Components/FeebackForm";
+
+
 
 const queryClient = new QueryClient();
 
@@ -15,9 +16,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ToastContainer />
       <Routes>
-        <Route path="/login" element={<AuthForm />} />
-        <Route path="/profile" element={<Profile />} />
         
+        
+          <Route path="/feedback" element={<FeedbackForm />} />
           <Route path="/" element={<BaleTrack />} />
         
       </Routes>

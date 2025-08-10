@@ -10,11 +10,15 @@ import { useTheme } from '../context/ThemeProvider';
 import { assets } from '../assets/assets';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import FeedbackForm from './FeebackForm';
+import { useNavigate } from 'react-router-dom';
 
 
 const Sidebar = ({ sidebarOpen, activePage, onNavigate }) => {
   const { theme, toggleTheme } = useTheme();
    const { user } = useContext(AuthContext)
+   const navigate = useNavigate();
+
   const navItems = [
     { id: 'dashboard', icon: <ChartBarIcon className="h-5 w-5 mr-3" />, label: 'Dashboard' },
     { id: 'data-entry', icon: <DocumentTextIcon className="h-5 w-5 mr-3" />, label: 'Data Entry' },
@@ -72,13 +76,17 @@ const Sidebar = ({ sidebarOpen, activePage, onNavigate }) => {
         src={assets.feedback_icon} 
         alt="FeedBack Icon"
         className="w-6 h-6 object-contain dark:invert" 
+         onClick={() => navigate('/feedback')}
       />
     </div>
     <div>
       <p className="text-sm font-medium text-dark dark:text-white">
       {user ? user.name : "Guest"}
       </p>
-      <p className="text-xs text-gray-500 dark:text-gray-400">FeedBack</p>
+      <p 
+     
+      className="text-xs text-gray-500 dark:text-gray-400">FeedBack</p>
+
     </div>
   </div>
 </div>

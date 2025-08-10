@@ -17,7 +17,7 @@ const handleError = (res, error, message = "An error occurred") => {
 const createExpenseEntry = async (req, res) => {
   try {
     // debug
-    console.log("ReqUser", req.user);
+    //console.log("ReqUser", req.user);
 
     const { expenseType, expenseDescription, expenseAmount } = req.body;
     const userId = req.user._id;
@@ -62,10 +62,10 @@ const createExpenseEntry = async (req, res) => {
 const getExpense = async (req, res) => {  // Fixed: Changed function name to match export (or fix the export)
   try {
     const userId = req.user._id;
-    console.log("Fetching expenses for user:", userId);
+    //console.log("Fetching expenses for user:", userId);
 
     const expenses = await Expense.find({ user: userId });
-    console.log("Found expenses:", expenses);
+    //console.log("Found expenses:", expenses);
 
     res.status(200).json({
       success: true,
@@ -123,7 +123,7 @@ const updateExpense = async (req, res) => {
     const userId = req.user._id;
     const { expenseType, expenseDescription, expenseAmount } = req.body;
 
-    console.log("Update req received", { id, userId, body: req.body });
+    //console.log("Update req received", { id, userId, body: req.body });
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       console.log("Invalid expense ID provided", id);

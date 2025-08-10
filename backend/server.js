@@ -5,6 +5,7 @@ import {connectDb} from './src/config/db.js'
 import userRouter from './src/routes/userRoutes.js'
 import baleRouter from './src/routes/baleRoutes.js'
 import expenseRouter from './src/routes/expenseRoutes.js'
+import savingRouter from './src/routes/savingRoute.js'
 
 
 //app config
@@ -30,6 +31,7 @@ app.use("/uploads", express.static('uploads'))
 app.use("/api/user", userRouter)
 app.use("/api/bales", baleRouter)
 app.use("/api/expenses", expenseRouter)
+app.use("/api/savings", savingRouter)
 
 
 

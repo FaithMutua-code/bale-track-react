@@ -16,6 +16,7 @@ import BaleFormDropdown from "./BaleDropDown";
 import { useRef } from "react";
 import ExpenseForm from "./ExpenseForm";
 import Spinner from "./Spinner";
+import SavingsForm from "./SavingsForm";
 
 {
   /**update the bale entry to reduce  on submission */
@@ -25,7 +26,7 @@ import Spinner from "./Spinner";
 
 const DataEntry = () => {
   const [activeTab, setActiveTab] = useState("bales");
-  const [savingsType, setSavingsType] = useState("");
+ 
   const [filters, setFilters] = useState({
     baleType: "",
     transactionType: "",
@@ -382,90 +383,9 @@ const DataEntry = () => {
           activeTab === "savings" ? "active" : "hidden"
         }`}
       >
-        <form className="space-y-3 md:space-y-4">
-          <div>
-            <label
-              htmlFor="savings-type"
-              className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Savings Type
-            </label>
-            <select
-              id="savings-type"
-              className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
-              required
-              value={savingsType}
-              onChange={(e) => setSavingsType(e.target.value)}
-            >
-              <option value="">Select type</option>
-              <option value="personal">Personal Savings</option>
-              <option value="business">Business Savings</option>
-              <option value="target">Target Savings</option>
-            </select>
-          </div>
 
-          {savingsType === "target" && (
-            <div>
-              <label
-                htmlFor="target-name"
-                className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
-                Target Name
-              </label>
-              <input
-                type="text"
-                id="target-name"
-                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
-                placeholder="e.g. New Truck"
-                required
-              />
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-            <div>
-              <label
-                htmlFor="savings-amount"
-                className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
-                Amount (Ksh)
-              </label>
-              <input
-                type="number"
-                id="savings-amount"
-                className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
-                placeholder="0.00"
-                required
-              />
-            </div>
-            {savingsType === "target" && (
-              <div>
-                <label
-                  htmlFor="target-amount"
-                  className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                >
-                  Target Amount (Ksh)
-                </label>
-                <input
-                  type="number"
-                  id="target-amount"
-                  className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
-                  placeholder="0.00"
-                  required
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="pt-1 md:pt-2">
-            <button
-              type="submit"
-              className="w-full px-4 py-2 md:px-6 md:py-2 bg-primary text-white text-xs md:text-sm font-medium rounded-lg hover:bg-opacity-90 transition duration-200"
-            >
-              Record Savings
-            </button>
-          </div>
-        </form>
+        <SavingsForm />
+        
       </div>
     </div>
   );
