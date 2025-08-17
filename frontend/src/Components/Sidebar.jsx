@@ -20,10 +20,10 @@ const Sidebar = ({ sidebarOpen, activePage, onNavigate }) => {
    const navigate = useNavigate();
 
   const navItems = [
-    { id: 'dashboard', icon: <ChartBarIcon className="h-5 w-5 mr-3" />, label: 'Dashboard' },
-    { id: 'data-entry', icon: <DocumentTextIcon className="h-5 w-5 mr-3" />, label: 'Data Entry' },
-    { id: 'savings', icon: <CurrencyDollarIcon className="h-5 w-5 mr-3" />, label: 'Savings' },
-    { id: 'reports', icon: <ChartPieIcon className="h-5 w-5 mr-3" />, label: 'Reports' }
+    { id: '/dashboard', icon: <ChartBarIcon className="h-5 w-5 mr-3" />, label: 'Dashboard' },
+    { id: '/data-entry', icon: <DocumentTextIcon className="h-5 w-5 mr-3" />, label: 'Data Entry' },
+    { id: '/savings', icon: <CurrencyDollarIcon className="h-5 w-5 mr-3" />, label: 'Savings' },
+    { id: '/reports', icon: <ChartPieIcon className="h-5 w-5 mr-3" />, label: 'Reports' }
   ];
 
   return (

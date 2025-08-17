@@ -8,7 +8,7 @@ import AuthForm from './Components/Login';
 //import EmptyDashboard from './Components/DashboardEmpty';
 
 
-function BaleTrack() {
+const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState('dashboard');
   const [showLogin, setShowLogin] = useState(false);
@@ -89,5 +89,3 @@ function BaleTrack() {
 );
 
 }
-
-export default BaleTrack;
