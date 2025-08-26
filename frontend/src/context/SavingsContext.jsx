@@ -99,14 +99,10 @@ const SavingsContextProvider = ({ children }) => {
           savingsType: savingsData.savingsType,
           savingsAmount: Number(savingsData.savingsAmount),
           savingsDate: savingsData.savingsDate,
-          targetName:
-            savingsData.savingsType === "target"
-              ? savingsData.targetName
-              : undefined,
-          targetAmount:
-            savingsData.savingsType === "target"
-              ? Number(savingsData.targetAmount)
-              : undefined,
+          targetName: savingsData.targetName || undefined,
+          targetAmount: savingsData.targetAmount
+            ? Number(savingsData.targetAmount)
+            : undefined,
         };
 
         const res = await axios.patch(`${backendUrl}/savings/${id}`, payload, {
@@ -201,7 +197,7 @@ const SavingsContextProvider = ({ children }) => {
       stats[saving.savingsType] += saving.savingsAmount;
       stats.totals.overall += saving.savingsAmount;
 
-      if (saving.savingsType === "target") {
+      if (saving.savingsType) {
         stats.totals.target += saving.savingsAmount;
         if (saving.targetAmount) {
           stats.targetProgress.push({

@@ -9,7 +9,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { ExpenseContext } from "../context/ExpenseContext.jsx";
 import { useAuth } from "../context/useAuth.js";
-import Spinner from "./Spinner.jsx"; // Assuming you've moved Spinner to its own file
+import Spinner from "./Spinner.jsx";
 
 const ExpenseForm = () => {
   const queryClient = useQueryClient();
@@ -24,8 +24,12 @@ const ExpenseForm = () => {
     deleteExpenses,
     updateExpenses,
     isLoading,
+    isStatsLoading,
+    expenseStats,
     error,
   } = useContext(ExpenseContext);
+
+  const [timePeriod, setTimePeriod] = useState('monthly'); // Default to monthly
 
   const [expenseForm, setExpenseForm] = useState({
     expenseType: "",
@@ -43,6 +47,7 @@ const ExpenseForm = () => {
       toast.success("Expense created successfully!");
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       resetExpenseForm();
+      setShowForm(false);
     },
     onError: (error) => {
       const message =
@@ -59,6 +64,7 @@ const ExpenseForm = () => {
       toast.success("Expense updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       resetExpenseForm();
+      setShowForm(false);
     },
     onError: (error) => {
       const message =
@@ -109,7 +115,7 @@ const ExpenseForm = () => {
       expenseType: "",
       expenseAmount: "",
       expenseDescription: "",
-      //expenseDate: new Date().toISOString().split("T")[0],
+      expenseDate: new Date().toISOString().split("T")[0],
     });
     setEditId(null);
   };
@@ -131,6 +137,7 @@ const ExpenseForm = () => {
       expenseType: expenseForm.expenseType,
       expenseAmount: parseFloat(expenseForm.expenseAmount),
       expenseDescription: expenseForm.expenseDescription,
+      expenseDate: expenseForm.expenseDate,
     };
 
     try {
@@ -149,13 +156,16 @@ const ExpenseForm = () => {
       expenseType: expense.expenseType,
       expenseAmount: expense.expenseAmount.toString(),
       expenseDescription: expense.expenseDescription || "",
-      expenseDate: new Date(expense.createdAt).toISOString().split("T")[0],
+      expenseDate:
+        expense.expenseDate ||
+        new Date(expense.createdAt).toISOString().split("T")[0],
     });
     setEditId(expense._id);
+    setShowForm(true);
   };
 
   const handleDelete = async (expenseId) => {
-    if (confirm("Are you sure you want to delete this Expense?")) {
+    if (window.confirm("Are you sure you want to delete this Expense?")) {
       try {
         await deleteMutation.mutateAsync(expenseId);
       } catch (err) {
@@ -166,8 +176,8 @@ const ExpenseForm = () => {
 
   const toggleForm = () => {
     setShowForm(!showForm);
-    if (editId && showForm) {
-      resetExpenseForm(); // Reset form if closing while in edit mode
+    if (!showForm) {
+      resetExpenseForm();
     }
   };
 
@@ -190,11 +200,11 @@ const ExpenseForm = () => {
             required
           >
             <option value="">Select category</option>
-            <option value="transport">transport</option>
-            <option value="utilities">utilities</option>
-            <option value="salaries">salaries</option>
-            <option value="supplies">supplies</option>
-            <option value="other">other</option>
+            <option value="transport">Transport</option>
+            <option value="utilities">Utilities</option>
+            <option value="salaries">Salaries</option>
+            <option value="supplies">Supplies</option>
+            <option value="other">Other</option>
           </select>
         </div>
 
@@ -213,7 +223,6 @@ const ExpenseForm = () => {
             onChange={handleExpenseChange}
             className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
             placeholder="What was this expense for?"
-            required
           />
         </div>
 
@@ -228,12 +237,16 @@ const ExpenseForm = () => {
             type="number"
             id="expenseAmount"
             name="expenseAmount"
+            value={expenseForm.expenseAmount}
             onChange={handleExpenseChange}
             className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
             placeholder="0.00"
             required
+            min="0"
+            step="0.01"
           />
         </div>
+
         <div>
           <label
             htmlFor="expenseDate"
@@ -249,13 +262,14 @@ const ExpenseForm = () => {
             onChange={handleExpenseChange}
             className="w-full px-3 py-2 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 dark:text-white"
             required
+            max={new Date().toISOString().split("T")[0]}
           />
         </div>
 
-        <div className="pt-1 md:pt-2">
+        <div className="pt-1 md:pt-2 flex gap-2">
           <button
             type="submit"
-            className="w-full px-4 py-2 md:px-6 md:py-2 bg-primary text-white text-xs md:text-sm font-medium rounded-lg hover:bg-opacity-90 transition duration-200"
+            className="flex-1 px-4 py-2 md:px-6 md:py-2 bg-primary text-white text-xs md:text-sm font-medium rounded-lg hover:bg-opacity-90 transition duration-200"
             disabled={createMutation.isLoading || updateMutation.isLoading}
           >
             {createMutation.isLoading || updateMutation.isLoading ? (
@@ -266,6 +280,13 @@ const ExpenseForm = () => {
               "Record Expense"
             )}
           </button>
+          <button
+            type="button"
+            onClick={toggleForm}
+            className="px-4 py-2 text-xs md:text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200"
+          >
+            Cancel
+          </button>
         </div>
       </form>
     </div>
@@ -275,6 +296,32 @@ const ExpenseForm = () => {
     <div>
       {/**Add Expense Button */}
       <div className="mb-4">
+
+
+        <div className="flex justify-between items-center mb-4">
+        <div className="flex space-x-2">
+          <button 
+            className={`px-3 py-1 rounded-lg text-sm ${
+              timePeriod === 'monthly' 
+                ? 'bg-primary text-white' 
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+            }`}
+            onClick={() => setTimePeriod('monthly')}
+          >
+            Monthly
+          </button>
+          <button 
+            className={`px-3 py-1 rounded-lg text-sm ${
+              timePeriod === 'quarterly' 
+                ? 'bg-primary text-white' 
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+            }`}
+            onClick={() => setTimePeriod('quarterly')}
+          >
+            Quarterly
+          </button>
+        </div>
+        
         <button
           onClick={toggleForm}
           className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition duration-200 ${
@@ -288,10 +335,74 @@ const ExpenseForm = () => {
         </button>
       </div>
 
-
       {/* Conditionally render the form */}
       {showForm && renderExpenseForm()}
 
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        {/* Total Expenses Card */}
+        <div className="bg-red-50 dark:bg-red-900/30 p-4 rounded-lg">
+          <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
+            Total Expenses
+          </h3>
+          <p className="text-2xl font-bold text-red-600 dark:text-red-300">
+            KSH {expenseStats?.totalExpenses?.toLocaleString() || "0"}
+          </p>
+          <p className="text-xs mt-1 text-red-700 dark:text-red-200">
+            {expenseStats?.expenseCount || "0"} transactions
+          </p>
+        </div>
+
+        {/* Average Expense Card */}
+        <div className="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-lg">
+          <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+            Average Expense
+          </h3>
+          <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-300">
+            KSH {expenseStats?.averageExpense?.toLocaleString() || "0"}
+          </p>
+          <p className="text-xs mt-1 text-yellow-700 dark:text-yellow-200">
+            Per transaction
+          </p>
+        </div>
+
+        {/* Highest Category Card */}
+        <div className="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-lg">
+          <h3 className="text-sm font-medium text-purple-800 dark:text-purple-200">
+            Highest Category
+          </h3>
+          <p className="text-2xl font-bold text-purple-600 dark:text-purple-300 capitalize">
+            {expenseStats?.highestCategory?.name || "N/A"}
+          </p>
+          <p className="text-xs mt-1 text-purple-700 dark:text-purple-200">
+            KSH {expenseStats?.highestCategory?.amount?.toLocaleString() || "0"}
+          </p>
+        </div>
+
+        {/* This Period vs Last Period */}
+        <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg">
+          <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200">
+            {timePeriod === "monthly" ? "Monthly" : "Quarterly"} Change
+          </h3>
+          <p
+            className={`text-2xl font-bold ${
+              (expenseStats?.periodComparison?.changePercent || 0) >= 0
+                ? "text-green-600 dark:text-green-300"
+                : "text-red-600 dark:text-red-300"
+            }`}
+          >
+            {(expenseStats?.periodComparison?.changePercent || 0) >= 0
+              ? "↑"
+              : "↓"}
+            {Math.abs(
+              expenseStats?.periodComparison?.changePercent || 0
+            ).toFixed(1)}
+            %
+          </p>
+          <p className="text-xs mt-1 text-blue-700 dark:text-blue-200">
+            {timePeriod === "monthly" ? "vs last month" : "vs last quarter"}
+          </p>
+        </div>
+      </div>
 
       {/**User Expense List */}
       <div className="mt-4">
@@ -302,15 +413,15 @@ const ExpenseForm = () => {
           </div>
         ) : error ? (
           <div className="text-center py-8 text-red-500">
-            <p>Error loading your bales: {error.message}</p>
+            <p>Error loading your Expenses: {error.message || error}</p>
             <button
-              onClick={() => queryClient.refetchQueries(["expenses"])}
+              onClick={() => fetchExpenses()}
               className="mt-2 px-4 py-2 bg-primary text-white rounded"
             >
               Retry
             </button>
           </div>
-        ) : expenses.length > 0 ? (
+        ) : expenses?.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-800">
@@ -336,16 +447,18 @@ const ExpenseForm = () => {
                 {expenses.map((expense) => (
                   <tr key={expense._id}>
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      {new Date(expense.createdAt).toLocaleDateString()}
+                      {new Date(
+                        expense.expenseDate || expense.createdAt
+                      ).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-white capitalize">
                       {expense.expenseType}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">
-                      {expense.expenseDescription}
+                      {expense.expenseDescription || "-"}
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      KSH {expense.expenseAmount.toLocaleString()}
+                      KSH {parseFloat(expense.expenseAmount).toLocaleString()}
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       <button
@@ -379,10 +492,17 @@ const ExpenseForm = () => {
               No Expenses
             </h3>
             <p className="text-gray-500 dark:text-gray-400 max-w-md mb-6">
-              You haven't input an expense yet
+              You haven't recorded any expenses yet
             </p>
+            <button
+              onClick={toggleForm}
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90 transition duration-200"
+            >
+              Add Your First Expense
+            </button>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

@@ -12,7 +12,9 @@ export const ExpenseContext = createContext(null);
 
 const ExpenseContextProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
+  const [expenseStats, setExpenseStats] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isStatsLoading, setIsStatsLoading] = useState(false);
   const [error, setError] = useState(null);
   const { token } = useAuth();
 
@@ -36,6 +38,36 @@ const ExpenseContextProvider = ({ children }) => {
     }
   }, [token, backendUrl]);
 
+  // Fetch expense statistics
+  // In your ExpenseContext, update the fetchExpenseStats function to handle the new period parameters:
+  const fetchExpenseStats = useCallback(
+    async (period = "all", year = null, month = null) => {
+      if (!token) return;
+
+      setIsStatsLoading(true);
+      setError(null);
+      try {
+        let url = `${backendUrl}/expenses/stats`;
+        const params = new URLSearchParams();
+
+        if (period) params.append("period", period);
+        if (year) params.append("year", year);
+        if (month) params.append("month", month);
+
+        const response = await axios.get(`${url}?${params.toString()}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setExpenseStats(response.data.data);
+      } catch (error) {
+        console.error("Error fetching expense stats:", error);
+        setError("Failed to fetch expense statistics");
+      } finally {
+        setIsStatsLoading(false);
+      }
+    },
+    [token, backendUrl]
+  );
+
   const createExpense = useCallback(
     async (expenseData) => {
       setIsLoading(true);
@@ -50,6 +82,9 @@ const ExpenseContextProvider = ({ children }) => {
 
         setExpenses((prev) => [...prev, response.data.data.expense]);
 
+        // Refresh stats after creating expense
+        await fetchExpenseStats();
+
         return response.data.data.expense;
       } catch (error) {
         console.error("Error creating expense:", error);
@@ -60,7 +95,7 @@ const ExpenseContextProvider = ({ children }) => {
         setIsLoading(false);
       }
     },
-    [token, backendUrl]
+    [token, backendUrl, fetchExpenseStats]
   );
 
   const updateExpenses = useCallback(
@@ -71,7 +106,6 @@ const ExpenseContextProvider = ({ children }) => {
           ...expenseData,
           expenseAmount: parseFloat(expenseData.expenseAmount),
         };
-
         const response = await axios.patch(
           `${backendUrl}/expenses/${expenseId}`,
           payload,
@@ -89,6 +123,9 @@ const ExpenseContextProvider = ({ children }) => {
           )
         );
 
+        // Refresh stats after updating expense
+        await fetchExpenseStats();
+
         return response.data.data.expense;
       } catch (error) {
         console.error("Update failed:", error);
@@ -99,7 +136,7 @@ const ExpenseContextProvider = ({ children }) => {
         setIsLoading(false);
       }
     },
-    [token, backendUrl]
+    [token, backendUrl, fetchExpenseStats]
   );
 
   const deleteExpenses = useCallback(
@@ -112,6 +149,9 @@ const ExpenseContextProvider = ({ children }) => {
 
         // Update the state
         setExpenses((prev) => prev.filter((exp) => exp._id !== expenseId));
+
+        // Refresh stats after deleting expense
+        await fetchExpenseStats();
       } catch (error) {
         console.error("Error deleting expense:", error);
         throw new Error(
@@ -121,30 +161,102 @@ const ExpenseContextProvider = ({ children }) => {
         setIsLoading(false);
       }
     },
-    [token, backendUrl]
+    [token, backendUrl, fetchExpenseStats]
   );
 
+  // Calculate local real-time stats from current expenses
+  // In your ExpenseContext's localExpenseStats calculation:
+  const localExpenseStats = useMemo(() => {
+    if (!expenses || expenses.length === 0) {
+      return {
+        totalExpenses: 0,
+        expenseCount: 0,
+        averageExpense: 0,
+        highestCategory: { name: null, amount: 0 },
+        periodComparison: { changePercent: 0 },
+      };
+    }
+
+    // Calculate basic stats
+    const stats = {
+      totalExpenses: 0,
+      expenseCount: expenses.length,
+      categoryBreakdown: {},
+      thisPeriodTotal: 0,
+      lastPeriodTotal: 0,
+    };
+
+    // Calculate totals and category breakdown
+    expenses.forEach((expense) => {
+      const amount = expense.expenseAmount;
+      const category = expense.category || "N/A";
+
+      stats.totalExpenses += amount;
+
+      if (!stats.categoryBreakdown[category]) {
+        stats.categoryBreakdown[category] = 0;
+      }
+      stats.categoryBreakdown[category] += amount;
+    });
+
+    // Find highest category
+    let highestCategory = { name: null, amount: 0 };
+    Object.entries(stats.categoryBreakdown).forEach(([name, amount]) => {
+      if (amount > highestCategory.amount) {
+        highestCategory = { name, amount };
+      }
+    });
+
+    return {
+      totalExpenses: Math.round(stats.totalExpenses * 100) / 100,
+      expenseCount: stats.expenseCount,
+      averageExpense:
+        Math.round((stats.totalExpenses / stats.expenseCount) * 100) / 100,
+      highestCategory,
+      periodComparison: {
+        changePercent:
+          stats.lastPeriodTotal > 0
+            ? ((stats.thisPeriodTotal - stats.lastPeriodTotal) /
+                stats.lastPeriodTotal) *
+              100
+            : 0,
+      },
+    };
+  }, [expenses]);
+
+  // Fetch initial data when token changes
   useEffect(() => {
-    fetchExpenses();
-  }, [fetchExpenses]);
+    if (token) {
+      Promise.all([fetchExpenses(), fetchExpenseStats()]);
+    }
+  }, [token, fetchExpenses, fetchExpenseStats]);
 
   const contextValue = useMemo(
     () => ({
       expenses,
+      expenseStats: expenseStats || localExpenseStats,
+      localExpenseStats,
       fetchExpenses,
+      fetchExpenseStats,
       createExpense,
       deleteExpenses,
       updateExpenses,
       isLoading,
+      isStatsLoading,
       error,
+      
     }),
     [
       expenses,
+      expenseStats,
+      localExpenseStats,
       fetchExpenses,
+      fetchExpenseStats,
       createExpense,
       deleteExpenses,
       updateExpenses,
       isLoading,
+      isStatsLoading,
       error,
     ]
   );
