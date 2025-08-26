@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTheme } from "../context/ThemeProvider";
 
-export default function FeedbackForm() {
+export default function FeedbackForm({ onBack }) {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [formData, setFormData] = useState({
@@ -13,7 +13,7 @@ export default function FeedbackForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const {theme } = useTheme()
+  const { theme } = useTheme();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,18 +35,27 @@ export default function FeedbackForm() {
       console.log("Submitted data:", { ...formData, rating });
       setSubmitSuccess(true);
       // Reset form after successful submission
-      setFormData({
-        name: "",
-        email: "",
-        message: "",
-        company: "",
-      });
-      setRating(0);
+      resetForm();
     } catch (error) {
       console.error("Submission error:", error);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      email: "",
+      message: "",
+      company: "",
+    });
+    setRating(0);
+    setHover(0);
+  };
+
+  const handleCancel = () => {
+    resetForm();
   };
 
   const StarRating = ({ value, onChange, hover, onHover }) => {
@@ -90,9 +99,7 @@ export default function FeedbackForm() {
   };
 
   return (
-    <div 
-    
-    className="min-h-screen bg-[#2D3748] py-12 px-4 sm:px-6 lg:px-8">
+    <div className={`min-h-screen py-12 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-[#2D3748]' : 'bg-gray-100'}`}>
       <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg">
         {submitSuccess ? (
           <div className="text-center py-8">
@@ -117,18 +124,44 @@ export default function FeedbackForm() {
             <p className="mt-2 text-sm text-gray-500">
               We appreciate you taking the time to share your experience with us.
             </p>
-            <button
-              onClick={() => setSubmitSuccess(false)}
-              className="mt-5 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Submit another feedback
-            </button>
+            <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
+              {onBack && (
+                <button
+                  onClick={onBack}
+                  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Go Back
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  setSubmitSuccess(false);
+                  resetForm();
+                }}
+                className="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Submit Another Feedback
+              </button>
+            </div>
           </div>
         ) : (
           <>
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-              Share Your Feedback
-            </h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 text-center flex-1">
+                Share Your Feedback
+              </h2>
+              {onBack && (
+                <button
+                  onClick={onBack}
+                  className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                  aria-label="Go back"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                </button>
+              )}
+            </div>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label
@@ -217,11 +250,11 @@ export default function FeedbackForm() {
                 />
               </div>
 
-              <div>
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   type="submit"
                   disabled={isSubmitting || rating === 0}
-                  className={`w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                  className={`flex-1 flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
                     isSubmitting || rating === 0
                       ? "bg-blue-400 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700"
@@ -264,6 +297,13 @@ export default function FeedbackForm() {
                       </svg>
                     </>
                   )}
+                </button>
+                <button
+                  type="button"
+                  className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  onClick={handleCancel}
+                >
+                  Cancel
                 </button>
               </div>
             </form>
