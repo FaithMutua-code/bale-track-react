@@ -22,11 +22,9 @@ import SavingsForm from "./SavingsForm";
   /**update the bale entry to reduce  on submission */
 }
 
-
-
 const DataEntry = () => {
   const [activeTab, setActiveTab] = useState("bales");
- 
+
   const [filters, setFilters] = useState({
     baleType: "",
     transactionType: "",
@@ -152,8 +150,8 @@ const DataEntry = () => {
   };
 
   const handleEdit = (bale) => {
-     //console.log("Editing bale:", bale); // Check this in console
-  // ... rest of the function
+    //console.log("Editing bale:", bale); // Check this in console
+    // ... rest of the function
     setBaleForm({
       baleType: bale.baleType,
       transactionType: bale.transactionType,
@@ -286,62 +284,116 @@ const DataEntry = () => {
               </button>
             </div>
           ) : bales.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-800">
-                  <tr>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Type
-                    </th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Transaction
-                    </th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Quantity
-                    </th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Price/Unit
-                    </th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                  {bales.map((bale) => (
-                    <tr key={bale._id}>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-white capitalize">
-                        {bale.baleType}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-white capitalize">
-                        {bale.transactionType}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        {bale.quantity}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        Ksh {bale.pricePerUnit?.toFixed(2)}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        <button
-                          onClick={() => handleEdit(bale)}
-                          className="text-blue-500 hover:text-blue-700 mr-3"
-                          disabled={deleteMutation.isLoading}
-                        >
-                          <PencilIcon className="h-4 w-4 inline" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(bale._id)}
-                          className="text-red-500 hover:text-red-700"
-                          disabled={deleteMutation.isLoading}
-                        >
-                          <TrashIcon className="h-4 w-4 inline" />
-                        </button>
-                      </td>
+            <div className="w-full">
+              {/* Table view (visible from sm and above) */}
+              <div className="hidden sm:block overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Type
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Transaction
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Quantity
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Price/Unit
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                    {bales.map((bale) => (
+                      <tr key={bale._id}>
+                        <td className="px-4 py-2 text-sm capitalize">
+                          {bale.baleType}
+                        </td>
+                        <td className="px-4 py-2 text-sm capitalize">
+                          {bale.transactionType}
+                        </td>
+                        <td className="px-4 py-2 text-sm">{bale.quantity}</td>
+                        <td className="px-4 py-2 text-sm">
+                          Ksh {bale.pricePerUnit?.toFixed(2)}
+                        </td>
+                        <td className="px-4 py-2 text-sm">
+                          <button
+                            onClick={() => handleEdit(bale)}
+                            className="text-blue-500 hover:text-blue-700 mr-3"
+                            disabled={deleteMutation.isLoading}
+                          >
+                            <PencilIcon className="h-4 w-4 inline" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(bale._id)}
+                            className="text-red-500 hover:text-red-700"
+                            disabled={deleteMutation.isLoading}
+                          >
+                            <TrashIcon className="h-4 w-4 inline" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Card view (visible on xs only) */}
+              <div className="block sm:hidden space-y-4">
+                {bales.map((bale) => (
+                  <div
+                    key={bale._id}
+                    className="p-4 rounded-lg shadow bg-white dark:bg-gray-900"
+                  >
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Type:
+                      </span>
+                      <span className="text-gray-900 dark:text-white capitalize">
+                        {bale.baleType}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm mt-2">
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Transaction:
+                      </span>
+                      <span className="capitalize">{bale.transactionType}</span>
+                    </div>
+                    <div className="flex justify-between text-sm mt-2">
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Quantity:
+                      </span>
+                      <span>{bale.quantity}</span>
+                    </div>
+                    <div className="flex justify-between text-sm mt-2">
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Price/Unit:
+                      </span>
+                      <span>Ksh {bale.pricePerUnit?.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-end space-x-3 mt-3">
+                      <button
+                        onClick={() => handleEdit(bale)}
+                        className="text-blue-500 hover:text-blue-700"
+                        disabled={deleteMutation.isLoading}
+                      >
+                        <PencilIcon className="h-4 w-4 inline" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(bale._id)}
+                        className="text-red-500 hover:text-red-700"
+                        disabled={deleteMutation.isLoading}
+                      >
+                        <TrashIcon className="h-4 w-4 inline" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
@@ -360,20 +412,14 @@ const DataEntry = () => {
         </div>
       </div>
 
-
-
-
       {/** Expenses Tab */}
       <div
         id="expenses"
         className={`tab-content ${
           activeTab === "expenses" ? "active" : "hidden"
         }`}
-        
-
       >
         <ExpenseForm />
-        
       </div>
 
       {/** Savings Tab */}
@@ -383,9 +429,7 @@ const DataEntry = () => {
           activeTab === "savings" ? "active" : "hidden"
         }`}
       >
-
         <SavingsForm />
-        
       </div>
     </div>
   );

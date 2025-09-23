@@ -21,6 +21,7 @@ const Savings = () => {
     savingsStats,
     createSaving,
     fetchSavingsStats,
+    handleNewGoal
   } = useContext(SavingsContext);
 
   const navigate = useNavigate();
@@ -122,11 +123,7 @@ const Savings = () => {
 
  
 
-  const handleNewGoal = () => {
-    // Find the data-entry item and navigate to its path
-    navigate("/data-entry")
  
-  };
 
   // Savings.jsx
   const handleExport = async (format = "pdf") => {

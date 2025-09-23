@@ -333,21 +333,8 @@ const Dashboard = () => {
             </h2>
           </div>
           <div className="space-y-4">
-            <SavingsGoal
-              title="New Delivery Truck"
-              current={650000}
-              target={1000000}
-            />
-            <SavingsGoal
-              title="Business Expansion"
-              current={420000}
-              target={1000000}
-            />
-            <SavingsGoal
-              title="Emergency Fund"
-              current={390000}
-              target={500000}
-            />
+            <SavingsGoal />
+            
           </div>
         </div>
       </div>

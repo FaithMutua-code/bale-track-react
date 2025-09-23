@@ -8,6 +8,7 @@ import BaleContextProvider from "./context/BaleContext";
 import { BrowserRouter } from "react-router-dom";
 import ExpenseContextProvider from "./context/ExpenseContext";
 import SavingsContextProvider from "./context/SavingsContext";
+import ReportsContextProvider from "./context/ReportsContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -16,7 +17,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <BaleContextProvider>
           <ExpenseContextProvider>
             <SavingsContextProvider>
-              <App />
+              <ReportsContextProvider>
+                 <App />
+              </ReportsContextProvider>
+             
             </SavingsContextProvider>
           </ExpenseContextProvider>
         </BaleContextProvider>
