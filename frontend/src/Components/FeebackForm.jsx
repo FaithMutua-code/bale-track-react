@@ -1,27 +1,54 @@
 import React, { useState } from "react";
 import { useTheme } from "../context/ThemeProvider";
 
-export default function FeedbackForm({ onBack }) {
-  const [rating, setRating] = useState(0);
-  const [hover, setHover] = useState(0);
+export default function ComplaintsForm({ onBack }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    message: "",
     company: "",
+    orderNumber: "",
+    complaintType: "",
+    subject: "",
+    description: "",
+    desiredResolution: "",
+    attachments: [],
+    contactPreference: "email",
+    urgency: "medium"
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const { theme } = useTheme();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const complaintTypes = [
+    "Product Quality Issue",
+    "Shipping/Delivery Problem",
+    "Billing/Payment Issue",
+    "Customer Service",
+    "Website/Technical Problem",
+    "Return/Refund Request",
+    "Product Not as Described",
+    "Other"
+  ];
 
-  const handleRatingChange = (ratingValue) => {
-    setRating(ratingValue);
+  const urgencyLevels = [
+    { value: "low", label: "Low", description: "General inquiry" },
+    { value: "medium", label: "Medium", description: "Need resolution within 48 hours" },
+    { value: "high", label: "High", description: "Urgent - need resolution within 24 hours" },
+    { value: "critical", label: "Critical", description: "Immediate attention required" }
+  ];
+
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+    
+    if (type === 'file') {
+      setFormData(prev => ({ 
+        ...prev, 
+        attachments: Array.from(files) 
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -30,11 +57,10 @@ export default function FeedbackForm({ onBack }) {
     
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      console.log("Submitted data:", { ...formData, rating });
+      console.log("Complaint submitted:", formData);
       setSubmitSuccess(true);
-      // Reset form after successful submission
       resetForm();
     } catch (error) {
       console.error("Submission error:", error);
@@ -47,60 +73,32 @@ export default function FeedbackForm({ onBack }) {
     setFormData({
       name: "",
       email: "",
-      message: "",
       company: "",
+      orderNumber: "",
+      complaintType: "",
+      subject: "",
+      description: "",
+      desiredResolution: "",
+      attachments: [],
+      contactPreference: "email",
+      urgency: "medium"
     });
-    setRating(0);
-    setHover(0);
   };
 
   const handleCancel = () => {
     resetForm();
   };
 
-  const StarRating = ({ value, onChange, hover, onHover }) => {
-    return (
-      <div className="flex items-center space-x-1 mb-4">
-        {[...Array(5)].map((_, index) => {
-          const ratingValue = index + 1;
-          return (
-            <button
-              key={index}
-              type="button"
-              className="focus:outline-none"
-              onClick={() => onChange(ratingValue)}
-              onMouseEnter={() => onHover(ratingValue)}
-              onMouseLeave={() => onHover(0)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className={`w-8 h-8 transition-colors duration-200 ${
-                  ratingValue <= (hover || value) 
-                    ? "text-yellow-400" 
-                    : "text-gray-300"
-                }`}
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          );
-        })}
-        <span className="ml-2 text-sm text-gray-600">
-          {rating ? `${rating} star${rating !== 1 ? 's' : ''}` : "Rate us"}
-        </span>
-      </div>
-    );
+  const removeAttachment = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      attachments: prev.attachments.filter((_, i) => i !== index)
+    }));
   };
 
   return (
     <div className={`min-h-screen py-12 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-[#2D3748]' : 'bg-gray-100'}`}>
-      <div className="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg">
+      <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
         {submitSuccess ? (
           <div className="text-center py-8">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
@@ -119,10 +117,10 @@ export default function FeedbackForm({ onBack }) {
               </svg>
             </div>
             <h2 className="mt-3 text-lg font-medium text-gray-900">
-              Thank you for your feedback!
+              Complaint Submitted Successfully!
             </h2>
             <p className="mt-2 text-sm text-gray-500">
-              We appreciate you taking the time to share your experience with us.
+              We take your concerns seriously. Our team will review your complaint and contact you within 24 hours.
             </p>
             <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
               {onBack && (
@@ -140,7 +138,7 @@ export default function FeedbackForm({ onBack }) {
                 }}
                 className="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                Submit Another Feedback
+                Submit Another Complaint
               </button>
             </div>
           </div>
@@ -148,7 +146,7 @@ export default function FeedbackForm({ onBack }) {
           <>
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-800 text-center flex-1">
-                Share Your Feedback
+                File a Complaint
               </h2>
               {onBack && (
                 <button
@@ -162,103 +160,248 @@ export default function FeedbackForm({ onBack }) {
                 </button>
               )}
             </div>
+
+            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-start">
+                <svg className="w-5 h-5 text-yellow-600 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <div>
+                  <p className="text-sm text-yellow-800 font-medium">
+                    We're sorry you're experiencing issues. Please provide detailed information so we can assist you better.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    required
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    required
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
+                    Company
+                  </label>
+                  <input
+                    type="text"
+                    id="company"
+                    name="company"
+                    value={formData.company}
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="orderNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                    Order/Reference Number
+                  </label>
+                  <input
+                    type="text"
+                    id="orderNumber"
+                    name="orderNumber"
+                    value={formData.orderNumber}
+                    placeholder="If applicable"
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="complaintType" className="block text-sm font-medium text-gray-700 mb-1">
+                    Complaint Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="complaintType"
+                    name="complaintType"
+                    value={formData.complaintType}
+                    required
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    onChange={handleChange}
+                  >
+                    <option value="">Select a category</option>
+                    {complaintTypes.map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="urgency" className="block text-sm font-medium text-gray-700 mb-1">
+                    Urgency Level <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="urgency"
+                    name="urgency"
+                    value={formData.urgency}
+                    required
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    onChange={handleChange}
+                  >
+                    {urgencyLevels.map(level => (
+                      <option key={level.value} value={level.value}>
+                        {level.label} - {level.description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Name <span className="text-red-500">*</span>
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                  Subject <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  placeholder="Your name"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
                   required
+                  placeholder="Brief summary of your complaint"
                   className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                   onChange={handleChange}
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  placeholder="your.email@example.com"
-                  required
-                  className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="company"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Company (optional)
-                </label>
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  value={formData.company}
-                  placeholder="Your company name"
-                  className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Rating <span className="text-red-500">*</span>
-                </label>
-                <StarRating
-                  value={rating}
-                  onChange={handleRatingChange}
-                  hover={hover}
-                  onHover={setHover}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Feedback Message <span className="text-red-500">*</span>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                  Detailed Description <span className="text-red-500">*</span>
                 </label>
                 <textarea
-                  id="message"
-                  name="message"
-                  rows={4}
-                  value={formData.message}
-                  placeholder="Your feedback helps us improve. Please share your thoughts..."
+                  id="description"
+                  name="description"
+                  rows={6}
+                  value={formData.description}
                   required
+                  placeholder="Please provide a detailed description of the issue, including dates, times, and any relevant information..."
                   className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                   onChange={handleChange}
                 />
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div>
+                <label htmlFor="desiredResolution" className="block text-sm font-medium text-gray-700 mb-1">
+                  Desired Resolution
+                </label>
+                <textarea
+                  id="desiredResolution"
+                  name="desiredResolution"
+                  rows={3}
+                  value={formData.desiredResolution}
+                  placeholder="What would you like us to do to resolve this issue?"
+                  className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="attachments" className="block text-sm font-medium text-gray-700 mb-1">
+                  Supporting Documents (Optional)
+                </label>
+                <input
+                  type="file"
+                  id="attachments"
+                  name="attachments"
+                  multiple
+                  accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  onChange={handleChange}
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  You can attach images, documents, or screenshots (Max 5 files, 10MB each)
+                </p>
+                
+                {formData.attachments.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    {formData.attachments.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm text-gray-600 truncate">{file.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeAttachment(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Preferred Contact Method
+                </label>
+                <div className="flex space-x-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      name="contactPreference"
+                      value="email"
+                      checked={formData.contactPreference === "email"}
+                      onChange={handleChange}
+                      className="text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">Email</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      name="contactPreference"
+                      value="phone"
+                      checked={formData.contactPreference === "phone"}
+                      onChange={handleChange}
+                      className="text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">Phone</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <button
                   type="submit"
-                  disabled={isSubmitting || rating === 0}
+                  disabled={isSubmitting}
                   className={`flex-1 flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                    isSubmitting || rating === 0
+                    isSubmitting
                       ? "bg-blue-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700"
-                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+                      : "bg-red-600 hover:bg-red-700"
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500`}
                 >
                   {isSubmitting ? (
                     <>
@@ -286,7 +429,7 @@ export default function FeedbackForm({ onBack }) {
                     </>
                   ) : (
                     <>
-                      Submit Feedback
+                      Submit Complaint
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -303,7 +446,7 @@ export default function FeedbackForm({ onBack }) {
                   className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   onClick={handleCancel}
                 >
-                  reset
+                  Reset Form
                 </button>
               </div>
             </form>

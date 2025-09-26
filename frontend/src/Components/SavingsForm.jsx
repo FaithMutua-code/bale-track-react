@@ -439,128 +439,224 @@ const SavingsForm = () => {
             </button>
           </div>
         ) : savings.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-800">
-                <tr>
-                  <th
-                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                    onClick={() => requestSort("createdAt")}
-                  >
-                    DATE {renderSortIcon("createdAt")}
-                  </th>
-                  <th
-                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                    onClick={() => requestSort("savingsType")}
-                  >
-                    TYPE {renderSortIcon("savingsType")}
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    PURPOSE/TARGET
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    GOAL AMOUNT
-                  </th>
-                  <th
-                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                    onClick={() => requestSort("savingsAmount")}
-                  >
-                    SAVED AMOUNT {renderSortIcon("savingsAmount")}
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    PROGRESS
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    ACTIONS
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                {savings.map((saving) => (
-                  <tr key={saving._id}>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+          <div className="w-full">
+            <div className="overflow-x-auto hidden sm:block">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-800">
+                  <tr>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                      onClick={() => requestSort("createdAt")}
+                    >
+                      DATE {renderSortIcon("createdAt")}
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                      onClick={() => requestSort("savingsType")}
+                    >
+                      TYPE {renderSortIcon("savingsType")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      PURPOSE/TARGET
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      GOAL AMOUNT
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                      onClick={() => requestSort("savingsAmount")}
+                    >
+                      SAVED AMOUNT {renderSortIcon("savingsAmount")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      PROGRESS
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      ACTIONS
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                  {savings.map((saving) => (
+                    <tr key={saving._id}>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {new Date(
+                          saving.savingsDate || saving.createdAt
+                        ).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white capitalize">
+                        {saving.savingsType}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                        {saving.targetName || "-"}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {saving.targetAmount
+                          ? `KSH ${saving.targetAmount.toLocaleString()}`
+                          : "-"}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        KSH {saving.savingsAmount.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {saving.savingsType && saving.targetAmount ? (
+                          <div className="flex items-center">
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mr-2">
+                              <div
+                                className={`h-2.5 rounded-full ${
+                                  saving.savingsAmount >= saving.targetAmount
+                                    ? "bg-green-500"
+                                    : "bg-blue-600"
+                                }`}
+                                style={{
+                                  width: `${Math.min(
+                                    Math.round(
+                                      (saving.savingsAmount /
+                                        saving.targetAmount) *
+                                        100
+                                    ),
+                                    100
+                                  )}%`,
+                                }}
+                              ></div>
+                            </div>
+                            <span>
+                              {Math.min(
+                                Math.round(
+                                  (saving.savingsAmount / saving.targetAmount) *
+                                    100
+                                ),
+                                100
+                              )}
+                              %
+                            </span>
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEdit(saving)}
+                            className="text-blue-500 hover:text-blue-700"
+                            disabled={
+                              deleteMutation.isLoading ||
+                              updateMutation.isLoading
+                            }
+                            title="Edit"
+                          >
+                            <PencilIcon className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(saving._id)}
+                            className="text-red-500 hover:text-red-700"
+                            disabled={deleteMutation.isLoading}
+                            title="Delete"
+                          >
+                            <TrashIcon className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="block sm:hidden space-y-4">
+              {savings.map((saving) => (
+                <div
+                  key={saving._id}
+                  className="p-4 rounded-lg shadow bg-white dark:bg-gray-900"
+                >
+                  <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <span>Date:</span>
+                    <span className="text-gray-900 dark:text-white">
                       {new Date(
                         saving.savingsDate || saving.createdAt
                       ).toLocaleDateString()}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white capitalize">
-                      {saving.savingsType}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                      {saving.targetName || "-"}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm mt-2">
+                    <span>Type:</span>
+                    <span className="capitalize">{saving.savingsType}</span>
+                  </div>
+                  <div className="flex justify-between text-sm mt-2">
+                    <span>Purpose:</span>
+                    <span>{saving.targetName || "-"}</span>
+                  </div>
+                  <div className="flex justify-between text-sm mt-2">
+                    <span>Goal:</span>
+                    <span>
                       {saving.targetAmount
                         ? `KSH ${saving.targetAmount.toLocaleString()}`
                         : "-"}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      KSH {saving.savingsAmount.toLocaleString()}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      {saving.savingsType  &&
-                      saving.targetAmount ? (
-                        <div className="flex items-center">
-                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mr-2">
-                            <div
-                              className={`h-2.5 rounded-full ${
-                                saving.savingsAmount >= saving.targetAmount
-                                  ? "bg-green-500"
-                                  : "bg-blue-600"
-                              }`}
-                              style={{
-                                width: `${Math.min(
-                                  Math.round(
-                                    (saving.savingsAmount /
-                                      saving.targetAmount) *
-                                      100
-                                  ),
-                                  100
-                                )}%`,
-                              }}
-                            ></div>
-                          </div>
-                          <span>
-                            {Math.min(
-                              Math.round(
-                                (saving.savingsAmount / saving.targetAmount) *
-                                  100
-                              ),
-                              100
-                            )}
-                            %
-                          </span>
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm mt-2">
+                    <span>Saved:</span>
+                    <span>KSH {saving.savingsAmount.toLocaleString()}</span>
+                  </div>
+                  <div className="mt-3">
+                    {/* Progress bar reused */}
+                    {saving.savingsType && saving.targetAmount ? (
+                      <div className="flex items-center">
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mr-2">
+                          <div
+                            className={`h-2.5 rounded-full ${
+                              saving.savingsAmount >= saving.targetAmount
+                                ? "bg-green-500"
+                                : "bg-blue-600"
+                            }`}
+                            style={{
+                              width: `${Math.min(
+                                Math.round(
+                                  (saving.savingsAmount / saving.targetAmount) *
+                                    100
+                                ),
+                                100
+                              )}%`,
+                            }}
+                          ></div>
                         </div>
-                      ) : (
-                        "-"
-                      )}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleEdit(saving)}
-                          className="text-blue-500 hover:text-blue-700"
-                          disabled={
-                            deleteMutation.isLoading || updateMutation.isLoading
-                          }
-                          title="Edit"
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(saving._id)}
-                          className="text-red-500 hover:text-red-700"
-                          disabled={deleteMutation.isLoading}
-                          title="Delete"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
+                        <span className="text-xs">
+                          {Math.min(
+                            Math.round(
+                              (saving.savingsAmount / saving.targetAmount) * 100
+                            ),
+                            100
+                          )}
+                          %
+                        </span>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    ) : (
+                      <span>-</span>
+                    )}
+                  </div>
+                  <div className="flex justify-end space-x-2 mt-3">
+                    <button
+                      onClick={() => handleEdit(saving)}
+                      className="text-blue-500 hover:text-blue-700"
+                      disabled={
+                        deleteMutation.isLoading || updateMutation.isLoading
+                      }
+                      title="Edit"
+                    >
+                      <PencilIcon className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(saving._id)}
+                      className="text-red-500 hover:text-red-700"
+                      disabled={deleteMutation.isLoading}
+                      title="Delete"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-12 px-4 text-center">

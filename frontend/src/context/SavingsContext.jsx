@@ -214,6 +214,13 @@ const SavingsContextProvider = ({ children }) => {
     return stats;
   }, [savings]);
 
+
+   const handleNewGoal = () => {
+    // Find the data-entry item and navigate to its path
+    navigate("/data-entry")
+ 
+  };
+
   useEffect(() => {
     if (token) fetchSavings();
   }, [fetchSavings, token]);
@@ -229,6 +236,7 @@ const SavingsContextProvider = ({ children }) => {
       isLoading,
       error,
       savingsStats,
+      handleNewGoal,
     }),
     [
       savings,
@@ -240,6 +248,7 @@ const SavingsContextProvider = ({ children }) => {
       isLoading,
       error,
       savingsStats,
+      handleNewGoal
     ]
   );
 

@@ -249,113 +249,102 @@ const deleteBale = async (req, res) => {
 };
 
 
-
-
+//service function
 export const getBalesStats = async (req, res) => {
   try {
-    const { user } = req;
-    
-    // Fetch all bales for the authenticated user
-    const bales = await Bale.find({ user: user._id });
-    
-    if (!bales || bales.length === 0) {
-      return res.status(200).json({
-        success: true,
-        data: {
-          totalPurchases: 0,
-          totalSales: 0,
-          totalRevenue: 0,
-          purchaseCount: 0,
-          saleCount: 0,
-          averagePurchasePrice: 0,
-          averageSalePrice: 0,
-          profitMargin: 0,
-          totalQuantityPurchased: 0,
-          totalQuantitySold: 0
-        }
-      });
-    }
-    
-    // Initialize stats object
-    const stats = {
+    // Optionally parse date range from query (monthly, quarterly, etc.)
+    const { startDate, endDate } = req.query;
+    const dateRange =
+      startDate && endDate ? { startDate: new Date(startDate), endDate: new Date(endDate) } : null;
+
+    const stats = await fetchBalesStatsForUser(req.user._id, dateRange);
+    res.status(200).json({ success: true, data: stats });
+  } catch (error) {
+    handleError(res, error, "Failed to fetch bales statistics");
+  }
+};
+
+
+
+// Service function: fetch bale stats for a user
+export const fetchBalesStatsForUser = async (userId, dateRange = null) => {
+  // Build query
+  const query = { user: userId };
+  if (dateRange) {
+    query.createdAt = { $gte: dateRange.startDate, $lte: dateRange.endDate };
+  }
+
+  const bales = await Bale.find(query);
+
+  if (!bales || bales.length === 0) {
+    return {
       totalPurchases: 0,
       totalSales: 0,
       totalRevenue: 0,
       purchaseCount: 0,
       saleCount: 0,
+      averagePurchasePrice: 0,
+      averageSalePrice: 0,
+      profitMargin: 0,
       totalQuantityPurchased: 0,
       totalQuantitySold: 0,
-      purchaseTransactions: [],
-      saleTransactions: []
+      recentPurchases: [],
+      recentSales: []
     };
-    
-    // Calculate stats from bales data
-    bales.forEach(bale => {
-      const totalAmount = bale.quantity * bale.pricePerUnit;
-      
-      if (bale.transactionType === 'purchase') {
-        stats.totalPurchases += totalAmount;
-        stats.purchaseCount += 1;
-        stats.totalQuantityPurchased += bale.quantity;
-        stats.purchaseTransactions.push({
-          id: bale._id,
-          date: bale.date,
-          quantity: bale.quantity,
-          pricePerUnit: bale.pricePerUnit,
-          totalAmount: totalAmount,
-          baleType: bale.baleType
-        });
-      } else if (bale.transactionType === 'sale') {
-        stats.totalSales += totalAmount;
-        stats.saleCount += 1;
-        stats.totalQuantitySold += bale.quantity;
-        stats.saleTransactions.push({
-          id: bale._id,
-          date: bale.date,
-          quantity: bale.quantity,
-          pricePerUnit: bale.pricePerUnit,
-          totalAmount: totalAmount,
-          baleType: bale.baleType
-        });
-      }
-    });
-    
-    // Calculate derived metrics
-    stats.totalRevenue = stats.totalSales - stats.totalPurchases;
-    stats.averagePurchasePrice = stats.purchaseCount > 0 ? stats.totalPurchases / stats.totalQuantityPurchased : 0;
-    stats.averageSalePrice = stats.saleCount > 0 ? stats.totalSales / stats.totalQuantitySold : 0;
-    stats.profitMargin = stats.totalSales > 0 ? ((stats.totalRevenue / stats.totalSales) * 100) : 0;
-    
-    // Clean up - remove transaction arrays from response (optional, for lighter response)
-    const responseStats = {
-      totalPurchases: Math.round(stats.totalPurchases * 100) / 100,
-      totalSales: Math.round(stats.totalSales * 100) / 100,
-      totalRevenue: Math.round(stats.totalRevenue * 100) / 100,
-      purchaseCount: stats.purchaseCount,
-      saleCount: stats.saleCount,
-      averagePurchasePrice: Math.round(stats.averagePurchasePrice * 100) / 100,
-      averageSalePrice: Math.round(stats.averageSalePrice * 100) / 100,
-      profitMargin: Math.round(stats.profitMargin * 100) / 100,
-      totalQuantityPurchased: stats.totalQuantityPurchased,
-      totalQuantitySold: stats.totalQuantitySold,
-      // Include recent transactions (optional)
-      recentPurchases: stats.purchaseTransactions.slice(-5).reverse(),
-      recentSales: stats.saleTransactions.slice(-5).reverse()
-    };
-    
-    res.status(200).json({
-      success: true,
-      data: responseStats
-    });
-    
-  } catch (error) {
-    console.error("Error fetching bales stats:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch bales statistics",
-      error: error.message
-    });
   }
+
+  const stats = {
+    totalPurchases: 0,
+    totalSales: 0,
+    purchaseCount: 0,
+    saleCount: 0,
+    totalQuantityPurchased: 0,
+    totalQuantitySold: 0,
+    purchaseTransactions: [],
+    saleTransactions: []
+  };
+
+  bales.forEach((bale) => {
+    const totalAmount = bale.quantity * bale.pricePerUnit;
+    if (bale.transactionType === "purchase") {
+      stats.totalPurchases += totalAmount;
+      stats.purchaseCount++;
+      stats.totalQuantityPurchased += bale.quantity;
+      stats.purchaseTransactions.push({ ...bale.toObject(), totalAmount });
+    } else if (bale.transactionType === "sale") {
+      stats.totalSales += totalAmount;
+      stats.saleCount++;
+      stats.totalQuantitySold += bale.quantity;
+      stats.saleTransactions.push({ ...bale.toObject(), totalAmount });
+    }
+  });
+
+  const totalRevenue = stats.totalSales - stats.totalPurchases;
+
+  return {
+    totalPurchases: stats.totalPurchases,
+    totalSales: stats.totalSales,
+    totalRevenue,
+    purchaseCount: stats.purchaseCount,
+    saleCount: stats.saleCount,
+    averagePurchasePrice:
+      stats.purchaseCount > 0
+        ? stats.totalPurchases / stats.totalQuantityPurchased
+        : 0,
+    averageSalePrice:
+      stats.saleCount > 0
+        ? stats.totalSales / stats.totalQuantitySold
+        : 0,
+    profitMargin:
+      stats.totalSales > 0 ? (totalRevenue / stats.totalSales) * 100 : 0,
+    totalQuantityPurchased: stats.totalQuantityPurchased,
+    totalQuantitySold: stats.totalQuantitySold,
+    recentPurchases: stats.purchaseTransactions.slice(-5).reverse(),
+    recentSales: stats.saleTransactions.slice(-5).reverse(),
+  };
 };
+
+
+
 
 export { createBaleEntry, getBales, getBaleById, updateBale, deleteBale };
