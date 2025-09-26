@@ -1,8 +1,24 @@
 import React, { useState } from "react";
 import { useTheme } from "../context/ThemeProvider";
 
-export default function ComplaintsForm({ onBack }) {
-  const [formData, setFormData] = useState({
+export default function FeedbackForm() {
+  const [activeTab, setActiveTab] = useState('feedback'); // 'feedback' or 'complaint'
+  const { theme } = useTheme();
+
+  // Feedback Form State
+  const [feedbackData, setFeedbackData] = useState({
+    name: "",
+    email: "",
+    message: "",
+    company: "",
+  });
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  // Complaint Form State
+  const [complaintData, setComplaintData] = useState({
     name: "",
     email: "",
     company: "",
@@ -15,10 +31,8 @@ export default function ComplaintsForm({ onBack }) {
     contactPreference: "email",
     urgency: "medium"
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  const { theme } = useTheme();
+  const [isSubmittingComplaint, setIsSubmittingComplaint] = useState(false);
+  const [complaintSubmitted, setComplaintSubmitted] = useState(false);
 
   const complaintTypes = [
     "Product Quality Issue",
@@ -38,39 +52,72 @@ export default function ComplaintsForm({ onBack }) {
     { value: "critical", label: "Critical", description: "Immediate attention required" }
   ];
 
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-    
-    if (type === 'file') {
-      setFormData(prev => ({ 
-        ...prev, 
-        attachments: Array.from(files) 
-      }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
+  // Feedback Handlers
+  const handleFeedbackChange = (e) => {
+    const { name, value } = e.target;
+    setFeedbackData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleRatingChange = (ratingValue) => {
+    setRating(ratingValue);
+  };
+
+  const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setIsSubmittingFeedback(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      console.log("Complaint submitted:", formData);
-      setSubmitSuccess(true);
-      resetForm();
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log("Feedback submitted:", { ...feedbackData, rating });
+      setFeedbackSubmitted(true);
+      resetFeedbackForm();
     } catch (error) {
       console.error("Submission error:", error);
     } finally {
-      setIsSubmitting(false);
+      setIsSubmittingFeedback(false);
     }
   };
 
-  const resetForm = () => {
-    setFormData({
+  const resetFeedbackForm = () => {
+    setFeedbackData({
+      name: "",
+      email: "",
+      message: "",
+      company: "",
+    });
+    setRating(0);
+    setHover(0);
+  };
+
+  // Complaint Handlers
+  const handleComplaintChange = (e) => {
+    const { name, value, type, files } = e.target;
+    
+    if (type === 'file') {
+      setComplaintData(prev => ({ ...prev, attachments: Array.from(files) }));
+    } else {
+      setComplaintData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleComplaintSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmittingComplaint(true);
+    
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log("Complaint submitted:", complaintData);
+      setComplaintSubmitted(true);
+      resetComplaintForm();
+    } catch (error) {
+      console.error("Submission error:", error);
+    } finally {
+      setIsSubmittingComplaint(false);
+    }
+  };
+
+  const resetComplaintForm = () => {
+    setComplaintData({
       name: "",
       email: "",
       company: "",
@@ -85,373 +132,395 @@ export default function ComplaintsForm({ onBack }) {
     });
   };
 
-  const handleCancel = () => {
-    resetForm();
-  };
-
-  const removeAttachment = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      attachments: prev.attachments.filter((_, i) => i !== index)
-    }));
+  // Star Rating Component
+  const StarRating = ({ value, onChange, hover, onHover }) => {
+    return (
+      <div className="flex items-center space-x-1 mb-4">
+        {[...Array(5)].map((_, index) => {
+          const ratingValue = index + 1;
+          return (
+            <button
+              key={index}
+              type="button"
+              className="focus:outline-none"
+              onClick={() => onChange(ratingValue)}
+              onMouseEnter={() => onHover(ratingValue)}
+              onMouseLeave={() => onHover(0)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className={`w-8 h-8 transition-colors duration-200 ${
+                  ratingValue <= (hover || value) 
+                    ? "text-yellow-400" 
+                    : "text-gray-300"
+                }`}
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          );
+        })}
+        <span className="ml-2 text-sm text-gray-600">
+          {value ? `${value} star${value !== 1 ? 's' : ''}` : "Rate us"}
+        </span>
+      </div>
+    );
   };
 
   return (
-    <div className={`min-h-screen py-12 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-[#2D3748]' : 'bg-gray-100'}`}>
-      <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-        {submitSuccess ? (
-          <div className="text-center py-8">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-              <svg
-                className="h-6 w-6 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 13l4 4L19 7"
-                />
+    <div className={`min-h-screen py-8 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-[#2D3748]' : 'bg-gray-50'}`}>
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Customer Feedback System
+          </h1>
+          <p className="text-lg text-gray-600">
+            We value your input. Choose how you'd like to share your experience with us.
+          </p>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="flex border-b border-gray-200 mb-8">
+          <button
+            onClick={() => setActiveTab('feedback')}
+            className={`flex-1 py-4 px-6 text-center font-medium text-lg transition-colors duration-200 ${
+              activeTab === 'feedback'
+                ? 'border-b-2 border-blue-500 text-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <div className="flex items-center justify-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
               </svg>
+              <span>Share Feedback</span>
             </div>
-            <h2 className="mt-3 text-lg font-medium text-gray-900">
-              Complaint Submitted Successfully!
-            </h2>
-            <p className="mt-2 text-sm text-gray-500">
-              We take your concerns seriously. Our team will review your complaint and contact you within 24 hours.
-            </p>
-            <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
-              {onBack && (
-                <button
-                  onClick={onBack}
-                  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Go Back
-                </button>
-              )}
-              <button
-                onClick={() => {
-                  setSubmitSuccess(false);
-                  resetForm();
-                }}
-                className="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Submit Another Complaint
-              </button>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('complaint')}
+            className={`flex-1 py-4 px-6 text-center font-medium text-lg transition-colors duration-200 ${
+              activeTab === 'complaint'
+                ? 'border-b-2 border-red-500 text-red-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <div className="flex items-center justify-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <span>File Complaint</span>
             </div>
-          </div>
-        ) : (
-          <>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800 text-center flex-1">
-                File a Complaint
-              </h2>
-              {onBack && (
-                <button
-                  onClick={onBack}
-                  className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                  aria-label="Go back"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                </button>
-              )}
-            </div>
+          </button>
+        </div>
 
-            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <div className="flex items-start">
-                <svg className="w-5 h-5 text-yellow-600 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                <div>
-                  <p className="text-sm text-yellow-800 font-medium">
-                    We're sorry you're experiencing issues. Please provide detailed information so we can assist you better.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    required
-                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    required
-                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
-                    Company
-                  </label>
-                  <input
-                    type="text"
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="orderNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                    Order/Reference Number
-                  </label>
-                  <input
-                    type="text"
-                    id="orderNumber"
-                    name="orderNumber"
-                    value={formData.orderNumber}
-                    placeholder="If applicable"
-                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="complaintType" className="block text-sm font-medium text-gray-700 mb-1">
-                    Complaint Type <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="complaintType"
-                    name="complaintType"
-                    value={formData.complaintType}
-                    required
-                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    onChange={handleChange}
-                  >
-                    <option value="">Select a category</option>
-                    {complaintTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="urgency" className="block text-sm font-medium text-gray-700 mb-1">
-                    Urgency Level <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="urgency"
-                    name="urgency"
-                    value={formData.urgency}
-                    required
-                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    onChange={handleChange}
-                  >
-                    {urgencyLevels.map(level => (
-                      <option key={level.value} value={level.value}>
-                        {level.label} - {level.description}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-                  Subject <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  required
-                  placeholder="Brief summary of your complaint"
-                  className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                  Detailed Description <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  rows={6}
-                  value={formData.description}
-                  required
-                  placeholder="Please provide a detailed description of the issue, including dates, times, and any relevant information..."
-                  className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="desiredResolution" className="block text-sm font-medium text-gray-700 mb-1">
-                  Desired Resolution
-                </label>
-                <textarea
-                  id="desiredResolution"
-                  name="desiredResolution"
-                  rows={3}
-                  value={formData.desiredResolution}
-                  placeholder="What would you like us to do to resolve this issue?"
-                  className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="attachments" className="block text-sm font-medium text-gray-700 mb-1">
-                  Supporting Documents (Optional)
-                </label>
-                <input
-                  type="file"
-                  id="attachments"
-                  name="attachments"
-                  multiple
-                  accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  onChange={handleChange}
-                />
-                <p className="mt-1 text-xs text-gray-500">
-                  You can attach images, documents, or screenshots (Max 5 files, 10MB each)
-                </p>
-                
-                {formData.attachments.length > 0 && (
-                  <div className="mt-2 space-y-2">
-                    {formData.attachments.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span className="text-sm text-gray-600 truncate">{file.name}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeAttachment(index)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
+        {/* Content Area */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          {/* Feedback Form */}
+          {activeTab === 'feedback' && (
+            <div>
+              {feedbackSubmitted ? (
+                <div className="text-center py-8">
+                  <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                    <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
                   </div>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Preferred Contact Method
-                </label>
-                <div className="flex space-x-4">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      name="contactPreference"
-                      value="email"
-                      checked={formData.contactPreference === "email"}
-                      onChange={handleChange}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">Email</span>
-                  </label>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      name="contactPreference"
-                      value="phone"
-                      checked={formData.contactPreference === "phone"}
-                      onChange={handleChange}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">Phone</span>
-                  </label>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h2>
+                  <p className="text-gray-600 mb-6">Your feedback has been submitted successfully.</p>
+                  <button
+                    onClick={() => setFeedbackSubmitted(false)}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Submit More Feedback
+                  </button>
                 </div>
-              </div>
+              ) : (
+                <form onSubmit={handleFeedbackSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                        Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={feedbackData.name}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        onChange={handleFeedbackChange}
+                      />
+                    </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`flex-1 flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                    isSubmitting
-                      ? "bg-blue-400 cursor-not-allowed"
-                      : "bg-red-600 hover:bg-red-700"
-                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500`}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                        Email <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={feedbackData.email}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        onChange={handleFeedbackChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
+                      Company (optional)
+                    </label>
+                    <input
+                      type="text"
+                      id="company"
+                      name="company"
+                      value={feedbackData.company}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      onChange={handleFeedbackChange}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Rating <span className="text-red-500">*</span>
+                    </label>
+                    <StarRating
+                      value={rating}
+                      onChange={handleRatingChange}
+                      hover={hover}
+                      onHover={setHover}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                      Feedback Message <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={4}
+                      value={feedbackData.message}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      onChange={handleFeedbackChange}
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      type="submit"
+                      disabled={isSubmittingFeedback || rating === 0}
+                      className={`flex-1 py-3 px-4 rounded-md text-white font-medium ${
+                        isSubmittingFeedback || rating === 0
+                          ? "bg-blue-400 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-700"
+                      }`}
+                    >
+                      {isSubmittingFeedback ? "Submitting..." : "Submit Feedback"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={resetFeedbackForm}
+                      className="py-3 px-6 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          )}
+
+          {/* Complaint Form */}
+          {activeTab === 'complaint' && (
+            <div>
+              {complaintSubmitted ? (
+                <div className="text-center py-8">
+                  <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                    <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Complaint Received!</h2>
+                  <p className="text-gray-600 mb-6">We'll review your complaint and contact you within 24 hours.</p>
+                  <button
+                    onClick={() => setComplaintSubmitted(false)}
+                    className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    File Another Complaint
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleComplaintSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="complaint-name" className="block text-sm font-medium text-gray-700 mb-1">
+                        Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="complaint-name"
+                        name="name"
+                        value={complaintData.name}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                        onChange={handleComplaintChange}
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="complaint-email" className="block text-sm font-medium text-gray-700 mb-1">
+                        Email <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="complaint-email"
+                        name="email"
+                        value={complaintData.email}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                        onChange={handleComplaintChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
+                        Company
+                      </label>
+                      <input
+                        type="text"
+                        id="company"
+                        name="company"
+                        value={complaintData.company}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                        onChange={handleComplaintChange}
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="orderNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                        Order Number
+                      </label>
+                      <input
+                        type="text"
+                        id="orderNumber"
+                        name="orderNumber"
+                        value={complaintData.orderNumber}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                        onChange={handleComplaintChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="complaintType" className="block text-sm font-medium text-gray-700 mb-1">
+                        Complaint Type <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        id="complaintType"
+                        name="complaintType"
+                        value={complaintData.complaintType}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                        onChange={handleComplaintChange}
                       >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      Submit Complaint
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-5 h-5 ml-2"
+                        <option value="">Select a category</option>
+                        {complaintTypes.map(type => (
+                          <option key={type} value={type}>{type}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label htmlFor="urgency" className="block text-sm font-medium text-gray-700 mb-1">
+                        Urgency Level <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        id="urgency"
+                        name="urgency"
+                        value={complaintData.urgency}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                        onChange={handleComplaintChange}
                       >
-                        <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
-                      </svg>
-                    </>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  onClick={handleCancel}
-                >
-                  Reset Form
-                </button>
-              </div>
-            </form>
-          </>
-        )}
+                        {urgencyLevels.map(level => (
+                          <option key={level.value} value={level.value}>
+                            {level.label} - {level.description}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                      Subject <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="subject"
+                      name="subject"
+                      value={complaintData.subject}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                      onChange={handleComplaintChange}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                      Detailed Description <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      rows={4}
+                      value={complaintData.description}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                      onChange={handleComplaintChange}
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      type="submit"
+                      disabled={isSubmittingComplaint}
+                      className={`flex-1 py-3 px-4 rounded-md text-white font-medium ${
+                        isSubmittingComplaint
+                          ? "bg-red-400 cursor-not-allowed"
+                          : "bg-red-600 hover:bg-red-700"
+                      }`}
+                    >
+                      {isSubmittingComplaint ? "Submitting..." : "Submit Complaint"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={resetComplaintForm}
+                      className="py-3 px-6 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
