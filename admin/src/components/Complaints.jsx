@@ -1,21 +1,22 @@
-// complaints.jsx
 import React, { useState } from "react";
 import {
-  PlusIcon,
-  ChevronDownIcon,
+  EllipsisVerticalIcon,
   FunnelIcon,
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/outline";
 
 const Complaints = () => {
-  const [complaints] = useState([
+  const [activeTab, setActiveTab] = useState("open");
+  const [activeMenu, setActiveMenu] = useState(null);
+
+  const complaints = [
     {
       id: 1,
-      customer: "Liam Johnston",
+      customer: "Liam Johnson",
       email: "liam@example.com",
       complaint: "Product arrived damaged",
       status: "Open",
-      priority: "Open",
+      priority: "High",
     },
     {
       id: 2,
@@ -31,202 +32,295 @@ const Complaints = () => {
       email: "noah@example.com",
       complaint: "Subscription not working",
       status: "Open",
-      priority: "High",
+      priority: "",
     },
-  ]);
+  ];
 
-  const [activeTab, setActiveTab] = useState("Open");
-
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "High":
-        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
-      case "Medium":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
-      case "Open":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Open":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
-    }
+  const handleAction = (action, complaintId) => {
+    console.log(`${action} complaint ${complaintId}`);
+    setActiveMenu(null);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Customer Complaints
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          View and manage all customer complaints.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
-        {/* Create New Complaint Button */}
-        <div className="lg:col-span-2">
-          <button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center gap-2 w-full lg:w-auto justify-center">
-            <PlusIcon className="w-5 h-5" />
-            Create New Complaint
-          </button>
-        </div>
-
-        {/* This Week Stats */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-          <div>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-              This Week
-            </p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-              25
-            </p>
-            <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-              +90% from last week
-            </p>
-          </div>
-        </div>
-
-        {/* This Month Stats */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-          <div>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-              This Month
-            </p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-              105
-            </p>
-            <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-              +5% from last month
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-6">
-        {/* Tabs with Filter and Export on the right */}
-        <div className="mb-6 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
-          {/* Left side: Tabs */}
-          <div className="flex space-x-4">
-            {["Open", "Resolved", "Escalated"].map((tab) => (
-              <button
-                key={tab}
-                className={`pb-4 px-1 font-medium text-sm ${
-                  activeTab === tab
-                    ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                }`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Card */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Section - Title and Button */}
+            <div className="lg:col-span-1 border-color-gray-200 dark:border-gray-700 px-4">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Customer Complaints
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                View and manage all customer complaints.
+              </p>
+              <button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200 text-sm">
+                Create New Complaint
               </button>
-            ))}
-          </div>
+            </div>
 
-          {/* Right side: Filter and Export */}
-          <div className="flex gap-2">
-            <button className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center gap-2">
-              <FunnelIcon className="w-4 h-4" />
-              Filter
-            </button>
-            <button className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center gap-2">
-              <ArrowDownTrayIcon className="w-4 h-4" />
-              Export
-            </button>
+            {/* This Week Stats */}
+            <div className="lg:col-span-1 m-4 border-l border-r border-gray-200 dark:border-gray-700 px-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  This Week
+                </p>
+                <p className="text-4xl font-bold text-gray-900 dark:text-white mb-1">
+                  25
+                </p>
+                <p className="text-sm text-green-600 dark:text-green-400 mb-3">
+                  +10% from last week
+                </p>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div
+                    className="bg-blue-600 h-2 rounded-full"
+                    style={{ width: "55%" }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            {/* This Month Stats */}
+            <div className="lg:col-span-1">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  This Month
+                </p>
+                <p className="text-4xl font-bold text-gray-900 dark:text-white mb-1">
+                  105
+                </p>
+                <p className="text-sm text-green-600 dark:text-green-400 mb-3">
+                  +5% from last month
+                </p>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div
+                    className="bg-blue-600 h-2 rounded-full"
+                    style={{ width: "52.5%" }}
+                  ></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Left Section - Title and Button (spans 2 columns) */}
+          <div className="lg:col-span-2 border-color-gray-200 dark:border-gray-700 px-4">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Customer Complaints
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+              View and manage all customer complaints.
+            </p>
+            <button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200 text-sm">
+              Create New Complaint
+            </button>
+          </div>
 
-      {/* Open Complaints Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+          {/* This Week Stats (1 column) */}
+          <div className="lg:col-span-1 m-4 border-l border-r border-gray-200 dark:border-gray-700 px-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                This Week
+              </p>
+              <p className="text-4xl font-bold text-gray-900 dark:text-white mb-1">
+                25
+              </p>
+              <p className="text-sm text-green-600 dark:text-green-400 mb-3">
+                +10% from last week
+              </p>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-blue-600 h-2 rounded-full"
+                  style={{ width: "55%" }}
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          {/* This Month Stats (1 column) */}
+          <div className="lg:col-span-1">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                This Month
+              </p>
+              <p className="text-4xl font-bold text-gray-900 dark:text-white mb-1">
+                105
+              </p>
+              <p className="text-sm text-green-600 dark:text-green-400 mb-3">
+                +5% from last month
+              </p>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-blue-600 h-2 rounded-full"
+                  style={{ width: "52.5%" }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Complaints Table Section */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          {/* Tabs */}
+          <div className="border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between px-6">
+              <div className="flex space-x-8">
+                <button
+                  onClick={() => setActiveTab("open")}
+                  className={`py-4 border-b-2 font-medium text-sm transition-colors ${
+                    activeTab === "open"
+                      ? "border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  }`}
+                >
+                  Open
+                </button>
+                <button
+                  onClick={() => setActiveTab("resolved")}
+                  className={`py-4 border-b-2 font-medium text-sm transition-colors ${
+                    activeTab === "resolved"
+                      ? "border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  }`}
+                >
+                  Resolved
+                </button>
+                <button
+                  onClick={() => setActiveTab("escalated")}
+                  className={`py-4 border-b-2 font-medium text-sm transition-colors ${
+                    activeTab === "escalated"
+                      ? "border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  }`}
+                >
+                  Escalated
+                </button>
+              </div>
+              <div className="flex space-x-3">
+                <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300">
+                  <FunnelIcon className="w-4 h-4" />
+                  <span className="text-sm">Filter</span>
+                </button>
+                <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300">
+                  <ArrowDownTrayIcon className="w-4 h-4" />
+                  <span className="text-sm">Export</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Table Content */}
+          <div className="p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               Open Complaints
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
               View and manage open customer complaints.
             </p>
-          </div>
-        </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="text-left py-4 px-6 text-sm font-medium text-gray-900 dark:text-white">
-                  Customer
-                </th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-gray-900 dark:text-white">
-                  Complaint
-                </th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-gray-900 dark:text-white">
-                  Status
-                </th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-gray-900 dark:text-white">
-                  Priority
-                </th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-gray-900 dark:text-white">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {complaints.map((complaint) => (
-                <tr
-                  key={complaint.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                >
-                  <td className="py-4 px-6">
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {complaint.customer}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {complaint.email}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 text-gray-900 dark:text-gray-100">
-                    {complaint.complaint}
-                  </td>
-                  <td className="py-4 px-6">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                        complaint.status
-                      )}`}
-                    >
-                      {complaint.status}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getPriorityColor(
-                        complaint.priority
-                      )}`}
-                    >
-                      {complaint.priority}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6">
-                    <button className="flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm font-medium">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Customer
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Complaint
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Status
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Priority
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
                       Actions
-                      <ChevronDownIcon className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {complaints.map((complaint) => (
+                    <tr
+                      key={complaint.id}
+                      className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    >
+                      <td className="py-4 px-4">
+                        <div className="font-medium text-gray-900 dark:text-white">
+                          {complaint.customer}
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          {complaint.email}
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-gray-700 dark:text-gray-300">
+                        {complaint.complaint}
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="text-gray-700 dark:text-gray-300">
+                          {complaint.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        {complaint.priority && (
+                          <span
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                              complaint.priority === "High"
+                                ? "bg-blue-600 text-white dark:bg-blue-700"
+                                : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                            }`}
+                          >
+                            {complaint.priority}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-4 px-4 relative">
+                        <button
+                          onClick={() =>
+                            setActiveMenu(
+                              activeMenu === complaint.id ? null : complaint.id
+                            )
+                          }
+                          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                        >
+                          <EllipsisVerticalIcon className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                        </button>
+                        {activeMenu === complaint.id && (
+                          <div className="absolute right-8 top-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10 py-1 w-32">
+                            <button
+                              onClick={() =>
+                                handleAction("resolve", complaint.id)
+                              }
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              Resolve
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleAction("escalate", complaint.id)
+                              }
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              Escalate
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleAction("delete", complaint.id)
+                              }
+                              className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
