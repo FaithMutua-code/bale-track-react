@@ -20,7 +20,7 @@ const ReportsContextProvider = ({ children }) => {
   const [exportError, setExportError] = useState(null);
   const { token } = useAuth();
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl ="https://biz-pulse-backend-jgbt.onrender.com";
 
   // Fetch financial data for reports
   const fetchFinancialData = useCallback(
