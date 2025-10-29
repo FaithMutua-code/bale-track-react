@@ -18,7 +18,7 @@ const BaleContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const { token } = useAuth();
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = "https://biz-pulse-backend-jgbt.onrender.com"
 
   // Separate purchases and sales from bales - ADD THIS
   const { purchases, sales } = useMemo(() => {
