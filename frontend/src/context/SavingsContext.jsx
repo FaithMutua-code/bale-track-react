@@ -8,6 +8,7 @@ import {
 import { useAuth } from "./useAuth.js";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {useNavigate} from "react-router-dom"
 
 export const SavingsContext = createContext(null);
 
@@ -16,6 +17,7 @@ const SavingsContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const { token, user } = useAuth();
+  const navigate = useNavigate();
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
