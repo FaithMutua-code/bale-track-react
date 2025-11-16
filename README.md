@@ -63,7 +63,7 @@ Multi-Currency Ready Default KES (Ksh), extendable
 
 ### Dashboard
 
-![Dashboard](../Gallery/overview.png)
+![Dashboard](./Gallery/overview.png)
 
 ### Reports
 
