@@ -26,35 +26,20 @@ purchases, and savings --- all in one clean dashboard.
 
 ---
 
-Feature Description
+### Feature Description
 
----
-
-Dashboard Analytics Real-time overview of stock, profit,
-expenses & sales
-
-Bale Data Entry Add bale type (Jeans, T-Shirts, Camera,
-etc.), price, weight & notes
-
-Purchase & Sales Tracking Log every buy/sell with timestamps and
-descriptions
-
-Warehouse Stock Management Auto-update stock with low-stock alerts
-
-Expense Breakdown Categorize expenses and view pie chart
-reports
-
-Savings Goals Create goals like "New Store", "New Truck",
-etc.
-
-Reports & Export Generate weekly/monthly PDF/CSV reports
-
-Customer Feedback System Get ratings & messages from users
-
-Dark Mode UI Mobile-friendly modern UI
-
-Multi-Currency Ready Default KES (Ksh), extendable
-
+| Feature | Description |
+|---------|-------------|
+| **📊 Dashboard Analytics** | Real-time overview of stock, profit, expenses & sales |
+| **📝 Bale Data Entry** | Add bale type (Jeans 👖, T-Shirts 👕, Camera 📸, etc.), price, weight & notes |
+| **🛒 Purchase & Sales Tracking** | Log every buy/sell with timestamps ⏰ and descriptions |
+| **🏭 Warehouse Stock Management** | Auto-update stock with **low-stock alerts** 🚨 |
+| **💳 Expense Breakdown** | Categorize expenses and view **pie chart reports** 🥧 |
+| **🐷 Savings Goals** | Create goals like *"New Store"*, *"New Truck"*, etc. |
+| **📑 Reports & Export** | Generate **weekly/monthly PDF/CSV reports** 📄 |
+| **💬 Customer Feedback System** | Get ratings ⭐ & messages from users |
+| **🌙 Dark Mode UI** | Mobile-friendly 📱 modern UI with dark mode |
+| **💱 Multi-Currency Ready** | Default **KES (Ksh)**, easily extendable |
 ---
 
 ---
