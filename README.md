@@ -81,7 +81,7 @@ Multi-Currency Ready Default KES (Ksh), extendable
 
 ## 🚀 Live Demo
 
-Local Development URL:\
+Deployment URL:\
 https://bale-track-react-main-user-ui.onrender.com
 
 ---
