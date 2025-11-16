@@ -111,7 +111,7 @@ Deployment Render
 
 ### Clone the Project
 
-    git clone https://github.com/yourusername/bale-track.git
+    git clone https://github.com/FaithMutua-code/bale-track-react
     cd bale-track
 
 ### Install Dependencies
