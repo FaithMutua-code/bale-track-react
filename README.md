@@ -3,7 +3,7 @@
 ### _Mitumba & General Stock Management System_
 
 ![BaleTrack
-Dashboard](../Gallery/overview.png)
+Dashboard](./Gallery/overview.png)
 
 Track your mitumba (second-hand clothes) bales or any general stock with
 ease --- from purchases to sales, expenses, savings, and profitability.
@@ -69,7 +69,7 @@ Multi-Currency Ready Default KES (Ksh), extendable
 
 ![Sales](../Gallery/report.png)
 
-### Expenses
+### Data-Entry
 
 ![Data-Entry](../Gallery/Dataentry.png)
 
