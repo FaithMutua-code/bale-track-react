@@ -131,38 +131,17 @@ const AIAssistant = () => {
       return "🏠 **Dashboard Overview:**\n\nYour dashboard shows:\n• **Net Profit/Loss** - Current financial position\n• **Warehouse Stock** - Available bale inventory\n• **Monthly Expenses** - Current period spending\n• **Total Savings** - Accumulated savings\n• **Bales Activity Chart** - Weekly transactions\n• **Recent Transactions** - Latest activities\n• **Expense Breakdown** - Spending categories\n\nUse this for quick business health checks!";
     }
 
-    // Theme/UI questions
+    // Theme/UI
     if (
       lowerMessage.includes("theme") ||
       lowerMessage.includes("dark") ||
       lowerMessage.includes("light") ||
-      lowerMessage.includes("mode") ||
-      lowerMessage.includes("appearance")
+      lowerMessage.includes("mode")
     ) {
-      return "🎨 **Theme Settings:**\n\nYou can switch between:\n• **Light Mode** - Bright interface for daytime\n• **Dark Mode** - Softer interface for nighttime\n\n**To change theme:**\n1. Look for the moon/sun icon in sidebar\n2. Click to toggle between modes\n3. Your preference is saved automatically\n\nThe theme applies to all pages including Dashboard, Data Entry, Savings, and Reports.";
+      return "🎨 **Theme Settings:**\n\nUse the moon/sun button in the sidebar to switch between dark mode and light mode.";
     }
 
-    // General business advice
-    if (
-      lowerMessage.includes("advice") ||
-      lowerMessage.includes("improve") ||
-      lowerMessage.includes("better") ||
-      lowerMessage.includes("tip")
-    ) {
-      return "💡 **Business Optimization Tips:**\n\nBased on industry best practices:\n• **Stock Management** - Maintain 2-4 weeks of inventory\n• **Pricing Strategy** - Regular competitor analysis\n• **Expense Control** - Monthly expense reviews\n• **Savings Habit** - Allocate 10-20% of profits to savings\n• **Data Consistency** - Daily transaction recording\n• **Seasonal Planning** - Adjust for market fluctuations\n• **Customer Feedback** - Regular system feedback collection";
-    }
-
-    // Feature explanations
-    if (
-      lowerMessage.includes("feature") ||
-      lowerMessage.includes("what can") ||
-      lowerMessage.includes("help with")
-    ) {
-      return "🔧 **BaleTrack Features I Can Help With:**\n\n**Core Functions:**\n• Bale transaction tracking\n• Warehouse stock management\n• Expense categorization\n• Savings goal setting\n• Financial reporting\n• Profit analysis\n\n**Advanced Features:**\n• Dark/Light theme switching\n• PDF/Excel report exports\n• Real-time dashboard updates\n• Mobile-responsive design\n• Data filtering and sorting\n\nAsk me about any specific feature!";
-    }
-
-    // Default response for unknown queries
-    return "🤖 **BaleTrack Assistant:**\n\nI understand you're asking about bale management. Could you be more specific about:\n\n📈 **Financial Analysis**\n• Profit calculations and margins\n• Revenue optimization\n• Expense management\n\n🏭 **Operations**\n• Stock and inventory management\n• Bale tracking procedures\n• Warehouse operations\n\n💾 **Data Management**\n• Data entry procedures\n• Report generation\n• Export functionality\n\n🎯 **Planning**\n• Savings goals\n• Business strategy\n• Performance improvement\n\nI'm here to help you get the most from BaleTrack!";
+    return "🤖 I'm not sure I understood. Could you ask your question differently?";
   };
 
   const handleSendMessage = async () => {
@@ -179,7 +158,6 @@ const AIAssistant = () => {
     setInputMessage("");
     setIsLoading(true);
 
-    // Simulate AI processing
     setTimeout(() => {
       const aiResponse = analyzeBaleData(inputMessage);
       const aiMessage = {
@@ -225,14 +203,14 @@ const AIAssistant = () => {
         </button>
       )}
 
-      {/* Chat Interface */}
+      {/* Chat Panel on the Right Side */}
       {isOpen && (
         <div
-          className={`fixed bottom-6 right-6 w-80 sm:w-96 h-96 rounded-2xl shadow-2xl border flex flex-col z-50 ${themeStyles.container} ${themeStyles.border}`}
+          className={`fixed top-0 right-0 h-full w-80 sm:w-96 shadow-2xl border-l flex flex-col z-50 ${themeStyles.container} ${themeStyles.border}`}
         >
           {/* Header */}
           <div
-            className={`flex items-center justify-between p-4 border-b rounded-t-2xl ${themeStyles.header} ${themeStyles.border}`}
+            className={`flex items-center justify-between p-4 border-b ${themeStyles.header}`}
           >
             <div className="flex items-center">
               <div

@@ -13,7 +13,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import FeedbackForm from "./FeebackForm";
 import { useNavigate } from "react-router-dom";
-import AIAssistant from "./AIAssistant";
+import AIAssistant from "./AiAssistant";
 
 const Sidebar = ({ sidebarOpen, activePage, onNavigate }) => {
   const { theme, toggleTheme } = useTheme();
