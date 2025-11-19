@@ -67,17 +67,15 @@ Multi-Currency Ready Default KES (Ksh), extendable
 
 ### Reports
 
-![Sales](../Gallery/report.png)
+![Sales](./Gallery/report.png)
 
 ### Expenses
 
-![Data-Entry](../Gallery/Dataentry.png)
+![Data-Entry](./Gallery/Dataentry.png)
 
 ### Savings Goals
 
-![Savings](../Gallery/savings.png)
-
----
+## ![Savings](./Gallery/savings.png)
 
 ## 🚀 Live Demo
 
