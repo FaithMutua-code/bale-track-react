@@ -1,15 +1,15 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import FeedbackForm from "./Components/FeebackForm";
-import Sidebar from './Components/Sidebar';
-import Dashboard from './Components/Dashboard';
-import DataEntry from './Components/DataEntry';
-import Savings from './Components/Savings';
-import Reports from './Components/Reports';
-import AuthForm from './Components/Login';
+import Sidebar from "./Components/Sidebar";
+import Dashboard from "./Components/Dashboard";
+import DataEntry from "./Components/DataEntry";
+import Savings from "./Components/Savings";
+import Reports from "./Components/Reports";
+import AuthForm from "./Components/Login";
 import Layout from "./Components/Layout";
-
+import AIAssistant from "./Components/AiAssistant";
 const queryClient = new QueryClient();
 
 // ✅ FeedbackWrapper to pass `onBack` prop
@@ -33,7 +33,8 @@ function App() {
           <Route path="data-entry" element={<DataEntry />} />
           <Route path="savings" element={<Savings />} />
           <Route path="reports" element={<Reports />} />
-          
+          <Route path="ai-assistant" element={<AIAssistant />} />
+
           {/* ✅ Use the wrapper here */}
           <Route path="feedback" element={<FeedbackWrapper />} />
         </Route>

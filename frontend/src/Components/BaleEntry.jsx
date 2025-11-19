@@ -1,7 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
-import { toast } from 'react-toastify';
-import { createBale, updateBale, deleteBale, getBaleById } from '../api/baleApi';
+import { useState } from "react";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import {
+  createBale,
+  updateBale,
+  deleteBale,
+  getBaleById,
+} from "../api/baleApi";
 
 export const BaleEntry = ({ baleId = null, onSuccess = () => {} }) => {
   const queryClient = useQueryClient();
@@ -9,16 +14,16 @@ export const BaleEntry = ({ baleId = null, onSuccess = () => {} }) => {
 
   // Form state
   const [formData, setFormData] = useState({
-    baleType: '',
-    transactionType: '',
-    quantity: '',
-    pricePerUnit: '',
-    description: ''
+    baleType: "",
+    transactionType: "",
+    quantity: "",
+    pricePerUnit: "",
+    description: "",
   });
 
   // Fetch bale data if in edit mode
-  const { data: baleData, isLoading } = useQuery({
-    queryKey: ['bales', baleId],
+  const { data: isLoading } = useQuery({
+    queryKey: ["bales", baleId],
     queryFn: () => getBaleById(baleId),
     enabled: isEditing,
     onSuccess: (data) => {
@@ -27,62 +32,62 @@ export const BaleEntry = ({ baleId = null, onSuccess = () => {} }) => {
         transactionType: data.transactionType,
         quantity: data.quantity.toString(),
         pricePerUnit: data.pricePerUnit.toString(),
-        description: data.description || ''
+        description: data.description || "",
       });
-    }
+    },
   });
 
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: createBale,
     onSuccess: () => {
-      toast.success('Bale created successfully!');
-      queryClient.invalidateQueries(['bales']);
+      toast.success("Bale created successfully!");
+      queryClient.invalidateQueries(["bales"]);
       onSuccess();
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to create bale');
-    }
+      toast.error(error.message || "Failed to create bale");
+    },
   });
 
   const updateMutation = useMutation({
     mutationFn: (data) => updateBale(baleId, data),
     onSuccess: () => {
-      toast.success('Bale updated successfully!');
-      queryClient.invalidateQueries(['bales']);
+      toast.success("Bale updated successfully!");
+      queryClient.invalidateQueries(["bales"]);
       onSuccess();
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to update bale');
-    }
+      toast.error(error.message || "Failed to update bale");
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: () => deleteBale(baleId),
     onSuccess: () => {
-      toast.success('Bale deleted successfully!');
-      queryClient.invalidateQueries(['bales']);
+      toast.success("Bale deleted successfully!");
+      queryClient.invalidateQueries(["bales"]);
       onSuccess();
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to delete bale');
-    }
+      toast.error(error.message || "Failed to delete bale");
+    },
   });
 
   // Form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     const payload = {
       ...formData,
       quantity: parseFloat(formData.quantity),
-      pricePerUnit: parseFloat(formData.pricePerUnit)
+      pricePerUnit: parseFloat(formData.pricePerUnit),
     };
 
     if (isEditing) {
@@ -93,7 +98,7 @@ export const BaleEntry = ({ baleId = null, onSuccess = () => {} }) => {
   };
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this bale?')) {
+    if (window.confirm("Are you sure you want to delete this bale?")) {
       deleteMutation.mutate();
     }
   };
@@ -102,7 +107,7 @@ export const BaleEntry = ({ baleId = null, onSuccess = () => {} }) => {
 
   return (
     <form onSubmit={handleSubmit} className="bale-form">
-      <h2>{isEditing ? 'Edit Bale' : 'Create New Bale'}</h2>
+      <h2>{isEditing ? "Edit Bale" : "Create New Bale"}</h2>
 
       <div className="form-grid">
         {/* Bale Type */}
@@ -185,7 +190,7 @@ export const BaleEntry = ({ baleId = null, onSuccess = () => {} }) => {
             className="delete-btn"
             disabled={deleteMutation.isLoading}
           >
-            {deleteMutation.isLoading ? 'Deleting...' : 'Delete'}
+            {deleteMutation.isLoading ? "Deleting..." : "Delete"}
           </button>
         )}
         <button
@@ -193,9 +198,14 @@ export const BaleEntry = ({ baleId = null, onSuccess = () => {} }) => {
           className="submit-btn"
           disabled={createMutation.isLoading || updateMutation.isLoading}
         >
-          {isEditing 
-            ? (updateMutation.isLoading ? 'Updating...' : 'Update')
-            : (createMutation.isLoading ? 'Creating...' : 'Create')} Bale
+          {isEditing
+            ? updateMutation.isLoading
+              ? "Updating..."
+              : "Update"
+            : createMutation.isLoading
+            ? "Creating..."
+            : "Create"}{" "}
+          Bale
         </button>
       </div>
     </form>
