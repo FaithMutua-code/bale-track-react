@@ -63,7 +63,9 @@ purchases, and savings --- all in one clean dashboard.
 
 ## ![Savings](./Gallery/savings.png)
 
-## [AI-assistant](./Gallery/AIAssistant.png)
+### AI Assistant
+
+## ![AI-assistant](./Gallery/AIAssistant.png)
 
 ## 🚀 Live Demo
 
