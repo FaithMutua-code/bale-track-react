@@ -166,6 +166,8 @@ Kenya 🇰🇪\
 GitHub: FaithMutua-code
 
 ---
+### Pitch deck
+https://gamma.app/docs/BaleTrack-Pitch-Deck-30ql5aooiz4i3jj
 
 ## ⭐ Support the Project
 
