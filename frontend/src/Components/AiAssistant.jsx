@@ -8,6 +8,8 @@ import {
 } from "@heroicons/react/outline";
 import { useTheme } from "../context/ThemeProvider";
 
+import axios from "axios";
+
 const AIAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -15,6 +17,8 @@ const AIAssistant = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const { theme } = useTheme();
+
+  const backendUrl = import.meta.env.VITE_BACKEND_URL + "/assistant/chat";
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -64,113 +68,121 @@ const AIAssistant = () => {
     }
   }, [isOpen]);
 
-  const analyzeBaleData = (userMessage) => {
-    const lowerMessage = userMessage.toLowerCase();
+  // Remove the local analyzeBaleData function since we'll use the API
 
-    // Profit analysis
-    if (
-      lowerMessage.includes("profit") ||
-      lowerMessage.includes("revenue") ||
-      lowerMessage.includes("margin")
-    ) {
-      return "I can analyze your profit trends. Based on your dashboard, profit is calculated as: **Total Sales - (Bale Purchases + Expenses)**.\n\n💰 **Key Metrics:**\n• Gross Profit: Sales - Purchase Costs\n• Net Profit: Gross Profit - Operating Expenses\n• Profit Margin: (Net Profit / Sales) × 100%\n\nCheck your Reports page for detailed breakdowns and trends over time.";
-    }
+const handleSendMessage = async () => {
+  if (!inputMessage.trim()) return;
 
-    // Stock management
-    if (
-      lowerMessage.includes("stock") ||
-      lowerMessage.includes("inventory") ||
-      lowerMessage.includes("warehouse")
-    ) {
-      return "🏭 **Stock Management Overview:**\n\nYour warehouse stock is tracked automatically:\n• **Purchases** increase stock levels\n• **Sales** decrease stock levels\n• **Low stock alerts** when levels drop below threshold\n\n📊 **Current Status:** View real-time stock levels on your Dashboard and manage bales in Data Entry section.";
-    }
-
-    // Expense analysis
-    if (
-      lowerMessage.includes("expense") ||
-      lowerMessage.includes("cost") ||
-      lowerMessage.includes("spending")
-    ) {
-      return "💸 **Expense Tracking:**\n\nExpenses are categorized into:\n• **Transport** - Logistics and shipping\n• **Utilities** - Power, water, internet\n• **Salaries** - Staff payments\n• **Supplies** - Operational materials\n• **Other** - Miscellaneous costs\n\n📈 **Impact:** All expenses affect your net profit. Track them regularly in Data Entry → Expenses tab.";
-    }
-
-    // Savings goals
-    if (
-      lowerMessage.includes("saving") ||
-      lowerMessage.includes("goal") ||
-      lowerMessage.includes("target")
-    ) {
-      return "🎯 **Savings Goals Management:**\n\nYou can set three types of savings:\n• **Personal Savings** - Individual financial goals\n• **Business Savings** - Company growth funds\n• **Target Savings** - Specific objectives with deadlines\n\n💡 **Tip:** Set realistic targets based on your monthly profit margins for achievable goals.";
-    }
-
-    // Data entry help
-    if (
-      lowerMessage.includes("add") ||
-      lowerMessage.includes("enter") ||
-      lowerMessage.includes("data entry") ||
-      lowerMessage.includes("create")
-    ) {
-      return "📝 **Data Entry Guide:**\n\n**To Add Bales:**\n1. Go to **Data Entry** tab\n2. Select **Bales** section\n3. Choose bale type (Cotton, Jute, Wool)\n4. Select transaction type (Purchase/Sale)\n5. Enter quantity and price per unit\n6. Add optional description\n7. Submit the form\n\n**To Add Expenses:**\n1. Switch to **Expenses** tab in Data Entry\n2. Select category and enter amount\n3. Add description and date\n4. Submit\n\n**To Add Savings:**\n1. Switch to **Savings** tab\n2. Choose savings type and amount\n3. Set target if applicable\n4. Submit";
-    }
-
-    // Report generation
-    if (
-      lowerMessage.includes("report") ||
-      lowerMessage.includes("export") ||
-      lowerMessage.includes("download")
-    ) {
-      return "📊 **Reports & Analytics:**\n\nAvailable report types:\n• **Financial Summary** - Profit & loss overview\n• **Bale Transactions** - Purchase/sale details\n• **Expense Breakdown** - Category-wise spending\n• **Savings Progress** - Goal tracking\n\n📁 **Export Options:**\n• **PDF** - For formal reporting and sharing\n• **Excel** - For data analysis and manipulation\n\nNavigate to **Reports** page and use export buttons in top-right corner.";
-    }
-
-    // Dashboard help
-    if (
-      lowerMessage.includes("dashboard") ||
-      lowerMessage.includes("overview") ||
-      lowerMessage.includes("home")
-    ) {
-      return "🏠 **Dashboard Overview:**\n\nYour dashboard shows:\n• **Net Profit/Loss** - Current financial position\n• **Warehouse Stock** - Available bale inventory\n• **Monthly Expenses** - Current period spending\n• **Total Savings** - Accumulated savings\n• **Bales Activity Chart** - Weekly transactions\n• **Recent Transactions** - Latest activities\n• **Expense Breakdown** - Spending categories\n\nUse this for quick business health checks!";
-    }
-
-    // Theme/UI
-    if (
-      lowerMessage.includes("theme") ||
-      lowerMessage.includes("dark") ||
-      lowerMessage.includes("light") ||
-      lowerMessage.includes("mode")
-    ) {
-      return "🎨 **Theme Settings:**\n\nUse the moon/sun button in the sidebar to switch between dark mode and light mode.";
-    }
-
-    return "🤖 I'm not sure I understood. Could you ask your question differently?";
+  const userMessage = {
+    id: Date.now(),
+    text: inputMessage,
+    sender: "user",
+    timestamp: new Date(),
   };
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  setMessages((prev) => [...prev, userMessage]);
+  setInputMessage("");
+  setIsLoading(true);
 
-    const userMessage = {
-      id: Date.now(),
-      text: inputMessage,
-      sender: "user",
-      timestamp: new Date(),
+  try {
+    // Convert messages to history format expected by backend
+    const history = messages
+      .filter(msg => msg.id !== 1) // Exclude initial welcome message
+      .map(msg => ({
+        sender: msg.sender,
+        text: msg.text
+      }));
+
+    // Prepare request body according to your backend expectations
+    const requestBody = {
+      message: inputMessage,
+      history: history,
+      includeThoughts: true,
+      thinkingBudget: 5000,
+      stream: false
     };
 
-    setMessages((prev) => [...prev, userMessage]);
-    setInputMessage("");
-    setIsLoading(true);
+    console.log("=== FRONTEND DEBUG INFO ===");
+    console.log("Backend URL:", backendUrl);
+    console.log("Request Body:", JSON.stringify(requestBody, null, 2));
+    console.log("Environment VITE_BACKEND_URL:", import.meta.env.VITE_BACKEND_URL);
 
-    setTimeout(() => {
-      const aiResponse = analyzeBaleData(inputMessage);
+    const response = await axios.post(backendUrl, requestBody, {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      timeout: 30000
+    });
+
+    console.log("=== BACKEND RESPONSE ===");
+    console.log("Response Status:", response.status);
+    console.log("Response Data:", response.data);
+
+    // Axios wraps the response in data property
+    const responseData = response.data;
+
+    if (responseData.success) {
       const aiMessage = {
         id: Date.now() + 1,
-        text: aiResponse,
+        text: responseData.answer,
         sender: "ai",
         timestamp: new Date(),
+        thoughts: responseData.includeThoughts ? responseData.thoughts : null,
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-      setIsLoading(false);
-    }, 1000);
-  };
+    } else {
+      const errorMessage = {
+        id: Date.now() + 1,
+        text: responseData.error || "Sorry, I'm having trouble responding right now. Please try again later.",
+        sender: "ai",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    }
+  } catch (error) {
+    console.log("=== ERROR DETAILS ===");
+    console.error('Full error object:', error);
+    
+    if (error.response) {
+      // Server responded with error status
+      console.log("Error Response Status:", error.response.status);
+      console.log("Error Response Data:", error.response.data);
+      console.log("Error Response Headers:", error.response.headers);
+    } else if (error.request) {
+      // Request made but no response received
+      console.log("No response received. Request:", error.request);
+    } else {
+      // Something else happened
+      console.log("Error Message:", error.message);
+    }
+    
+    console.log("Error Config:", error.config);
+    
+    let errorText = "I'm experiencing connection issues. Please check your internet connection and try again.";
+    
+    if (error.response) {
+      errorText = error.response.data?.error || `Server error: ${error.response.status}`;
+    } else if (error.request) {
+      errorText = "Unable to connect to the AI service. Please check if the backend server is running.";
+    } else if (error.code === 'ECONNABORTED') {
+      errorText = "Request timed out. The AI is taking longer than expected to respond.";
+    } else if (error.message.includes('Network Error')) {
+      errorText = "Network error. Please check your internet connection and CORS settings.";
+    }
+    
+    const errorMessage = {
+      id: Date.now() + 1,
+      text: errorText,
+      sender: "ai",
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, errorMessage]);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -179,13 +191,12 @@ const AIAssistant = () => {
     }
   };
 
-  const quickActions = [
-    { label: "Profit Analysis", query: "How is my profit calculated?" },
+const quickActions = [
+    { label: "Profit Analysis", query: "How do I calculate profit for cotton bales?" },
     { label: "Add Bale", query: "How do I add a new bale?" },
     { label: "Stock Status", query: "Tell me about stock management" },
     { label: "Expense Help", query: "How should I track expenses?" },
   ];
-
   return (
     <>
       {/* Floating Action Button */}
@@ -256,6 +267,17 @@ const AIAssistant = () => {
                   }`}
                 >
                   <p className="text-sm whitespace-pre-line">{message.text}</p>
+                  {/* Optional: Show thoughts if available */}
+                  {message.thoughts && (
+                    <details className="mt-2">
+                      <summary className="text-xs cursor-pointer opacity-70">
+                        🤔 See AI's thought process
+                      </summary>
+                      <div className="mt-1 p-2 bg-opacity-50 rounded text-xs whitespace-pre-line">
+                        {message.thoughts}
+                      </div>
+                    </details>
+                  )}
                   <p
                     className={`text-xs opacity-70 mt-1 ${
                       message.sender === "user"

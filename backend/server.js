@@ -7,6 +7,7 @@ import baleRouter from './src/routes/baleRoutes.js'
 import expenseRouter from './src/routes/expenseRoutes.js'
 import savingRouter from './src/routes/savingRoute.js'
 import reportRouter from './src/routes/reportRoutes.js'
+import aiRouter from './src/routes/ai_assistantRoutes.js'
 
 
 //app config
@@ -34,6 +35,7 @@ app.use("/api/bales", baleRouter)
 app.use("/api/expenses", expenseRouter)
 app.use("/api/savings", savingRouter)
 app.use("/api/reports", reportRouter)
+app.use("/api/assistant", aiRouter)
 
 
 
